@@ -1,16 +1,16 @@
+import { prettyAccelerator, type HotkeyId } from '../../shared/hotkeys'
+import type { SettingsView } from '../../shared/ipc'
 import type { Settings } from '../../shared/types'
 import { $, api } from '../shared/api'
 import { logoImg } from '../shared/brand'
 
-type HotkeyId = 'hotkey' | 'hotkeyRepeat' | 'hotkeyText'
-type S = Settings & { hotkeyStatus: Record<HotkeyId, boolean> }
 
 document.querySelector('h1')!.insertAdjacentHTML('afterbegin', logoImg('big'))
 const msg = $('#msg')
-let settings: S
+let settings: SettingsView
 let listening: HotkeyId | null = null
 
-const pretty = (acc: string) => acc.replace('Control', 'Ctrl').replace('Shift', 'Mayús').replace(/\+/g, ' + ')
+const pretty = prettyAccelerator
 const names: Record<HotkeyId, string> = { hotkey: 'Capturar', hotkeyRepeat: 'Repetir última región', hotkeyText: 'Copiar texto' }
 
 function render(): void {

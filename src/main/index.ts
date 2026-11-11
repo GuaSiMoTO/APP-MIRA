@@ -2,7 +2,8 @@ import { app, BrowserWindow, dialog, globalShortcut, Menu, nativeImage, session,
 import { isCapturing, registerCaptureIpc, repeatLastRegion, startCapture } from './capture'
 import { editorFiles, registerEditorIpc } from './editor'
 import { flushHistory, openHistory, pruneHistory, registerHistoryIpc } from './history'
-import { cleanTempDir, ensureSaveDir, handleProtocol, registerSchemes } from './media'
+import { cleanTempDir, ensureSaveDir } from './files'
+import { handleProtocol, registerSchemes } from './protocol'
 import { stopOcr, warmOcr } from './ocr'
 import { closeAllPins, hasPins, pinFiles, registerPinIpc } from './pin'
 import { playerFiles, registerPlayerIpc } from './player'
@@ -16,6 +17,7 @@ import { installedRunning, isTakeoverRequest, notifyTakeover, requestLock, takeO
 import { logError } from './log'
 import { createWindow, resourcePath } from './windows'
 import { handle, on } from './ipc'
+import { HOTKEYS, prettyAccelerator, type HotkeyId } from '../shared/hotkeys'
 
 // Instancia única. En desarrollo, si la Mira instalada está abierta, se cierra para dejar paso
 const gotLock = requestLock()
@@ -50,8 +52,6 @@ let settingsWin: BrowserWindow | null = null
 
 // ---------- Atajos globales ----------
 
-type HotkeyId = 'hotkey' | 'hotkeyRepeat' | 'hotkeyText'
-const HOTKEYS: HotkeyId[] = ['hotkey', 'hotkeyRepeat', 'hotkeyText']
 
 const actions: Record<HotkeyId, () => void> = {
   hotkey: () => {
@@ -80,6 +80,14 @@ function registerHotkey(id: HotkeyId, accelerator: string): boolean {
   return false
 }
 
+/** Atajos suspendidos mientras se graba uno nuevo en Ajustes. */
+let hotkeysSuspended = false
+
+function resumeHotkeys(): void {
+  hotkeysSuspended = false
+  registerAllHotkeys()
+}
+
 function registerAllHotkeys(): HotkeyId[] {
   const s = getSettings()
   return HOTKEYS.filter((id) => !registerHotkey(id, s[id]))
@@ -90,8 +98,7 @@ function hotkeyStatus(): Record<HotkeyId, boolean> {
   return { hotkey: registered.hotkey === s.hotkey, hotkeyRepeat: !s.hotkeyRepeat || registered.hotkeyRepeat === s.hotkeyRepeat, hotkeyText: !s.hotkeyText || registered.hotkeyText === s.hotkeyText }
 }
 
-/** "Control+Shift+S" → "Ctrl + Mayús + S" (nombres de teclas en español) */
-const pretty = (acc?: string) => (acc ?? '').replace('Control', 'Ctrl').replace('Shift', 'Mayús').replaceAll('+', ' + ')
+const pretty = prettyAccelerator
 
 // ---------- Ventanas y bandeja ----------
 
@@ -110,7 +117,11 @@ function openSettings(): void {
     backgroundColor: '#1c1c1f'
   })
   settingsWin.once('ready-to-show', () => settingsWin?.show())
-  settingsWin.on('closed', () => (settingsWin = null))
+  settingsWin.on('closed', () => {
+    settingsWin = null
+    // Si se cierra mientras se graba un atajo, los atajos seguirían suspendidos hasta reiniciar
+    if (hotkeysSuspended) resumeHotkeys()
+  })
 }
 
 function buildTrayMenu(): void {
@@ -180,9 +191,10 @@ function registerSettingsIpc(): void {
   // Mientras se edita un atajo en Ajustes, se suspenden para poder pulsarlos
   on('settings:suspend-hotkey', (_e, suspend: unknown) => {
     if (suspend === true) {
+      hotkeysSuspended = true
       globalShortcut.unregisterAll()
       for (const id of HOTKEYS) delete registered[id]
-    } else registerAllHotkeys()
+    } else resumeHotkeys()
   })
 }
 

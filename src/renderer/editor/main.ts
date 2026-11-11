@@ -334,11 +334,26 @@ function fitZoom(): number {
   return Math.min(1, (availW * unit) / L.W, (availH * unit) / L.H)
 }
 
-/** Límite para que el lienzo no pase de ~12 000 px de lado ni ~60 Mpx (memoria). */
+/** Memoria máxima de los lienzos del escenario al hacer zoom. */
+const STAGE_MAX_BYTES = 512 * 1024 * 1024
+/** Lado máximo de un canvas en Chromium: por encima no se dibuja. Se deja margen. */
+const CANVAS_MAX_SIDE = 16000
+const STAGE_LAYERS = 2 // `layer` (captura y anotaciones) y `ui` (tiradores, recorte…)
+
+/**
+ * Zoom máximo según la memoria que ocupan los lienzos. Cada capa Konva tiene un lienzo de dibujo
+ * a la resolución de la pantalla (`Konva.pixelRatio`) y otro de detección de clics a 1×, los dos
+ * del tamaño del escenario en píxeles CSS, que es `base × zoom / unit`.
+ */
 function maxZoom(): number {
-  const side = 12000 / Math.max(base.width, base.height)
-  const area = Math.sqrt(60e6 / (base.width * base.height))
-  return Math.max(1, Math.min(8, side, area))
+  const pr = Konva.pixelRatio
+  const cssPerZoom2 = (base.width * base.height) / (unit * unit) // área CSS con zoom 1
+  const bytesPerZoom2 = cssPerZoom2 * 4 * STAGE_LAYERS * (pr * pr + 1)
+  const byMemory = Math.sqrt(STAGE_MAX_BYTES / bytesPerZoom2)
+  const bySide = (CANVAS_MAX_SIDE * unit) / (Math.max(base.width, base.height) * pr)
+  // Normalmente ≥ 100 %; solo una imagen gigantesca (p. ej. una captura con desplazamiento muy
+  // larga) obliga a quedarse por debajo
+  return Math.max(MIN_ZOOM, Math.min(8, byMemory, bySide))
 }
 
 function currentZoom(): number {

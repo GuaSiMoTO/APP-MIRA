@@ -5,7 +5,7 @@ import { join } from 'node:path'
 import type { NativeImage } from 'electron'
 import type { OcrResult } from '../shared/types'
 import { logError } from './log'
-import { tempDir } from './media'
+import { tempDir } from './files'
 import { resourcePath } from './windows'
 
 let proc: ChildProcessWithoutNullStreams | null = null

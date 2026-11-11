@@ -1,7 +1,7 @@
 import { BrowserWindow, desktopCapturer, dialog, nativeImage, screen, type Display, type NativeImage } from 'electron'
 import type { OverlayInit, OverlayState, Rect, ScreenInfo } from '../shared/types'
 import { addImageToHistory } from './history'
-import { copyImage, saveImageToFolder, writeTempImage } from './media'
+import { copyImage, saveImageToFolder, writeTempImage } from './files'
 import { showPreview } from './preview'
 import { isRecording, startRecording } from './recorder'
 import { isScrolling, startScrollCapture } from './scroll'

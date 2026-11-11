@@ -1,6 +1,6 @@
 import { BrowserWindow, nativeImage, screen, shell } from 'electron'
 import { readFile } from 'node:fs/promises'
-import { copyImage, imageFromBytes, saveImageAs, saveImageToFolder, writeTempImage } from './media'
+import { copyImage, imageFromBytes, saveImageAs, saveImageToFolder, writeTempImage } from './files'
 import { addImageToHistory } from './history'
 import { logError } from './log'
 import { ocrImage } from './ocr'

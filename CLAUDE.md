@@ -25,12 +25,23 @@ solo desaparece firmando el instalador con un certificado de firma de código.
 
 Tests unitarios (Vitest, en `tests/`) para la lógica sin pantalla: censura automática (`sensitive.ts`), unión de la
 captura con desplazamiento (`stitch.ts`), geometría del fondo y de las transformaciones, rangos del protocolo y
-validación de ajustes. Los módulos del proceso principal se prueban simulando `electron` con `vi.mock`. Lo que
+validación de ajustes, nombres de archivo sin sobrescribir, limpieza de temporales, ffmpeg (con un vídeo real) e historial con
+operaciones a la vez. Los módulos del proceso principal se prueban simulando `electron` con `vi.mock`. Lo que
 depende de la pantalla o de Windows se valida con pruebas de humo dentro de la app (ver más abajo).
 
 Robustez del proceso principal: los JSON se leen y escriben con `store.ts` (escritura atómica; un archivo dañado se
 aparta como `.corrupt-<fecha>.bak`), los datos que llegan por IPC se validan con `validate.ts` / `pickSettings`, y los
-errores se registran con `logError` (`log.ts`) en `userData/mira.log`.
+errores se registran con `logError` (`log.ts`) en `userData/mira.log`. En el proceso principal hay manejadores globales
+(`unhandledRejection`, `uncaughtException`, `render-process-gone`). Las ventanas envían sus errores sin capturar por
+`app:error` (`reportError` en `shared/api.ts`).
+
+- Archivos nuevos: con `writeNewFile` (`media.ts`), que nunca sobrescribe (si el nombre existe, usa «Nombre (2)»…).
+  En «Guardar como», el nombre propuesto sale de `freeName`.
+- ffmpeg: siempre con `runFfmpeg` / `spawnFfmpeg`, que lo detienen si deja de informar de progreso.
+- Limpieza: `housekeeping()` (`index.ts`) poda el historial y borra los temporales de más de 24 h, salvo los que tenga
+  abiertos alguna ventana (`previewFiles`, `editorFiles`, `pinFiles` y `playerFiles`).
+- Grabación: el vídeo llega en trozos por `recorder:chunk` y se va añadiendo al archivo; no hay ninguna grabación
+  entera en memoria.
 
 ## Arquitectura
 

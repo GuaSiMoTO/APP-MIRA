@@ -9,7 +9,9 @@ vi.mock('electron', () => ({
   protocol: {}
 }))
 
-const { cleanTempDir, convertVideo, freeName, imageBytes, parseRange, probeMedia, runFfmpeg, spawnFfmpeg, writeNewFile } = await import('../src/main/media')
+const { cleanTempDir, freeName, imageBytes, writeNewFile } = await import('../src/main/files')
+const { convertVideo, probeMedia, runFfmpeg, spawnFfmpeg } = await import('../src/main/ffmpeg')
+const { parseRange } = await import('../src/main/protocol')
 const { pickSettings, pickState } = await import('../src/main/settings')
 const { isRect, oneOf, toBuffer } = await import('../src/main/validate')
 import type { OverlayState, Settings } from '../src/shared/types'

@@ -27,13 +27,17 @@ const NAMES: Record<number, string> = {
   0x2c: 'ImprPant',
   0x2d: 'Insert',
   0x2e: 'Supr',
-  0xba: 'ñ',
+  // Teclas de signos: nombres según la distribución de teclado española
+  0xba: '`',
   0xbb: '+',
   0xbc: ',',
   0xbd: '-',
   0xbe: '.',
   0xbf: 'ç',
   0xc0: 'ñ',
+  0xdb: "'",
+  0xdc: 'º',
+  0xdd: '¡',
   0xde: '´'
 }
 

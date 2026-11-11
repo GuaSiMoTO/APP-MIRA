@@ -7,7 +7,7 @@ import { absRect, createControlBar, createRegionFrame, physicalCrop, screenSourc
 import { sendWheel, setCursorPos } from './winapi'
 import { isNum } from './validate'
 import { logError } from './log'
-import { imageFromBytes } from './media'
+import { imageFromBytes } from './files'
 import { handle, on, sendTo } from './ipc'
 
 let bar: BrowserWindow | null = null

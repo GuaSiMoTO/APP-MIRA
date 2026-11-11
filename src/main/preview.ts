@@ -8,7 +8,7 @@ import { openEditor } from './editor'
 import { logError } from './log'
 import { openPin } from './pin'
 import { openPlayer } from './player'
-import { copyImage, ensureSaveDir, saveImageToFolder, saveVideoAs } from './media'
+import { copyImage, ensureSaveDir, saveImageToFolder, saveVideoAs } from './files'
 import { getSettings } from './settings'
 import { createWindow, ready, resourcePath } from './windows'
 import { handle, on, sendTo } from './ipc'
@@ -102,11 +102,6 @@ function closeCard(card: Card | undefined, remember = true): void {
   cards = cards.filter((c) => c !== card)
   if (!card.win.isDestroyed()) card.win.destroy()
   layout()
-}
-
-/** Cierra todas las vistas previas. */
-export function closePreview(): void {
-  for (const c of [...cards]) closeCard(c, false)
 }
 
 /** Vuelve a mostrar la última vista previa cerrada. */

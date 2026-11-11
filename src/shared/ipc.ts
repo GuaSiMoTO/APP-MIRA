@@ -19,7 +19,9 @@ import type {
   TextCardState
 } from './types'
 
-export type HotkeyId = 'hotkey' | 'hotkeyRepeat' | 'hotkeyText'
+import type { HotkeyId } from './hotkeys'
+
+export type { HotkeyId }
 /** Ajustes tal y como los ve la ventana de Ajustes (con el estado de cada atajo) */
 export type SettingsView = Settings & { hotkeyStatus: Record<HotkeyId, boolean> }
 /** Elemento del historial con las URL para mostrarlo */

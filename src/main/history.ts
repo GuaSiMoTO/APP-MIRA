@@ -7,7 +7,9 @@ import { extname, join } from 'node:path'
 import type { HistoryItem } from '../shared/types'
 import { openEditor } from './editor'
 import { logError } from './log'
-import { copyImage, ffmpegPath, runFfmpeg, saveImageAs, saveVideoAs } from './media'
+import { ffmpegPath, runFfmpeg } from './ffmpeg'
+import { historyUrl } from './protocol'
+import { copyImage, saveImageAs, saveVideoAs } from './files'
 import { openPin } from './pin'
 import { openPlayer } from './player'
 import { readJson, writeJsonAtomic } from './store'
@@ -89,13 +91,13 @@ async function removeFiles(it: HistoryItem): Promise<void> {
 
 /** Borra lo que tenga más de 30 días. */
 export async function pruneHistory(): Promise<void> {
-  const list = load()
   const limit = Date.now() - KEEP_DAYS * 24 * 3600 * 1000
-  const old = list.filter((i) => i.date < limit)
+  // Primero se quitan del índice (sin esperas de por medio) y luego se borran sus archivos
+  const old = load().filter((i) => i.date < limit)
   if (!old.length) return
-  for (const it of old) await removeFiles(it)
-  items = list.filter((i) => i.date >= limit)
+  items = load().filter((i) => i.date >= limit)
   persist()
+  for (const it of old) await removeFiles(it)
 }
 
 function newId(): string {
@@ -121,17 +123,41 @@ async function videoThumb(src: string, dest: string): Promise<boolean> {
   }
 }
 
+// Cambia al vaciar el historial: lo que se estaba añadiendo en ese momento ya no debe entrar
+let generation = 0
+
+/**
+ * Mete un elemento en el índice cuando sus archivos ya están escritos. Se lee el índice en este
+ * momento (no antes de las esperas), así no se pierden borrados ni otras capturas hechas mientras
+ * tanto. Se ordena por fecha porque dos capturas pueden terminar en otro orden.
+ */
+async function insert(gen: number, item: HistoryItem): Promise<void> {
+  if (gen !== generation) {
+    await removeFiles(item)
+    return
+  }
+  const list = load()
+  const at = list.findIndex((i) => i.date < item.date)
+  list.splice(at < 0 ? list.length : at, 0, item)
+  persist()
+}
+
+/** Prepara un elemento nuevo: carpetas creadas, identificador, fecha y generación actual. */
+function begin(): { gen: number; id: string; date: number } {
+  load()
+  return { gen: generation, id: newId(), date: Date.now() }
+}
+
 /** Añade una captura de imagen (archivo PNG ya escrito). */
 export async function addImageToHistory(path: string, img?: NativeImage, source = 'Captura'): Promise<void> {
   try {
-    const list = load()
-    const id = newId()
+    const { gen, id, date } = begin()
     const file = `items/${id}${extname(path) || '.png'}`
     await copyFile(path, historyPath(file))
     const image = img ?? nativeImage.createFromPath(path)
     const size = image.getSize()
-    list.unshift({ id, kind: 'image', date: Date.now(), file, thumb: await saveThumb(id, image), width: size.width, height: size.height, bytes: statSync(path).size, source })
-    persist()
+    const thumb = await saveThumb(id, image)
+    await insert(gen, { id, kind: 'image', date, file, thumb, width: size.width, height: size.height, bytes: statSync(path).size, source })
   } catch (err) {
     logError('Historial: no se pudo añadir la imagen', err)
   }
@@ -139,14 +165,12 @@ export async function addImageToHistory(path: string, img?: NativeImage, source 
 
 export async function addVideoToHistory(path: string): Promise<void> {
   try {
-    const list = load()
-    const id = newId()
+    const { gen, id, date } = begin()
     const file = `items/${id}${extname(path) || '.webm'}`
     await copyFile(path, historyPath(file))
     const thumbRel = `thumbs/${id}.jpg`
     const hasThumb = await videoThumb(historyPath(file), historyPath(thumbRel))
-    list.unshift({ id, kind: 'video', date: Date.now(), file, thumb: hasThumb ? thumbRel : '', bytes: statSync(path).size, source: 'Grabación' })
-    persist()
+    await insert(gen, { id, kind: 'video', date, file, thumb: hasThumb ? thumbRel : '', bytes: statSync(path).size, source: 'Grabación' })
   } catch (err) {
     logError('Historial: no se pudo añadir el vídeo', err)
   }
@@ -154,20 +178,15 @@ export async function addVideoToHistory(path: string): Promise<void> {
 
 export async function addTextToHistory(text: string, img: NativeImage): Promise<void> {
   try {
-    const list = load()
-    const id = newId()
+    const { gen, id, date } = begin()
     const file = `items/${id}.png`
     await writeFile(historyPath(file), img.toPNG())
     const size = img.getSize()
-    list.unshift({ id, kind: 'text', date: Date.now(), file, thumb: await saveThumb(id, img), width: size.width, height: size.height, bytes: text.length, text, source: 'Texto' })
-    persist()
+    const thumb = await saveThumb(id, img)
+    await insert(gen, { id, kind: 'text', date, file, thumb, width: size.width, height: size.height, bytes: text.length, text, source: 'Texto' })
   } catch (err) {
     logError('Historial: no se pudo añadir el texto', err)
   }
-}
-
-export function historyUrl(rel: string): string {
-  return `capturas://historial/${rel.split('/').map(encodeURIComponent).join('/')}`
 }
 
 export function openHistory(): void {
@@ -231,14 +250,13 @@ export function registerHistoryIpc(): void {
 
   handle('history:delete', async (_e, raw: unknown) => {
     if (!Array.isArray(raw)) return false
-    const ids = raw.filter((x): x is string => typeof x === 'string')
-    const list = load()
-    for (const id of ids) {
-      const it = list.find((i) => i.id === id)
-      if (it) await removeFiles(it)
-    }
-    items = list.filter((i) => !ids.includes(i.id))
+    const ids = new Set(raw.filter((x): x is string => typeof x === 'string'))
+    // Primero se quitan del índice (sin esperas de por medio) y luego se borran sus archivos:
+    // así dos borrados seguidos no pueden devolver al índice elementos ya borrados
+    const removed = load().filter((i) => ids.has(i.id))
+    items = load().filter((i) => !ids.has(i.id))
     persist()
+    for (const it of removed) await removeFiles(it)
     return true
   })
 
@@ -257,6 +275,7 @@ export function registerHistoryIpc(): void {
     if (r.response !== 0) return false
     if (persistTimer) clearTimeout(persistTimer)
     persistTimer = null
+    generation++
     await rm(root(), { recursive: true, force: true })
     items = null
     load()
