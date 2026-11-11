@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'" />
+    <title>Editor de capturas</title>
+    <link rel="stylesheet" href="./shared/theme.css" />
+    <link rel="stylesheet" href="./editor/editor.css" />
+  </head>
+  <body>
+    <header id="topbar">
+      <button class="icon-btn undo-redo" id="undo" title="Deshacer (Ctrl+Z)"></button>
+      <button class="icon-btn undo-redo" id="redo" title="Rehacer (Ctrl+Y o Ctrl+Mayús+Z)"></button>
+      <div class="sep"></div>
+      <div id="tools" class="group"></div>
+      <div class="sep"></div>
+      <div id="colors" class="group"></div>
+      <div class="sep"></div>
+      <div id="sizes" class="group"></div>
+      <div class="spacer"></div>
+      <button class="icon-btn" id="bg-toggle" title="Fondo decorativo"></button>
+      <button class="icon-btn wide" id="image-menu" title="Imagen: rotar, voltear, redimensionar, censurar, anclar"></button>
+      <button class="icon-btn" id="ocr" title="Copiar el texto de la imagen (OCR)"></button>
+      <div class="sep"></div>
+      <button class="icon-btn" id="copy" title="Copiar al portapapeles (Ctrl+C)"></button>
+      <button class="icon-btn" id="save-as" title="Guardar como… (Ctrl+Shift+S)"></button>
+      <button class="btn primary" id="save" title="Guardar en la carpeta de capturas (Ctrl+S)">Guardar</button>
+    </header>
+
+    <div id="ctxbar"></div>
+
+    <main id="workspace">
+      <div id="frame">
+        <div id="decor" class="decor"><div id="stage"></div></div>
+      </div>
+      <aside id="bgpanel" hidden>
+        <h3>Fondo</h3>
+        <div id="gradients"></div>
+        <div class="bg-custom">
+          <span>Color propio</span>
+          <button class="chip-btn" id="bg-c1" title="Color 1"></button>
+          <button class="chip-btn" id="bg-c2" title="Color 2"></button>
+          <div class="seg" id="bg-kind"><button data-kind="gradient">Degradado</button><button data-kind="solid">Liso</button></div>
+        </div>
+        <button class="btn small" id="bg-image-btn">Usar una imagen propia…</button>
+        <input type="file" id="bg-file" accept="image/*" hidden />
+        <h4>Proporción</h4>
+        <div class="seg" id="bg-ratio"></div>
+        <h4>Alineación</h4>
+        <div id="bg-align"></div>
+        <label>Margen <input type="range" id="bg-pad" min="0" max="200" value="64" /></label>
+        <label>Esquinas <input type="range" id="bg-radius" min="0" max="40" value="12" /></label>
+        <label class="check"><input type="checkbox" id="bg-shadow" checked /> Sombra</label>
+        <label class="check" title="Quita los bordes de un solo color de la captura para que el espacio alrededor quede igual"><input type="checkbox" id="bg-balance" /> Auto Balance</label>
+        <h4>Favoritos</h4>
+        <div id="bg-presets"></div>
+        <button class="btn small" id="bg-save-preset">Guardar este fondo</button>
+      </aside>
+    </main>
+
+    <footer id="status">
+      <span id="dims"></span>
+      <div id="zoombar">
+        <button class="zbtn" id="zoom-out" title="Alejar (Ctrl + −)">−</button>
+        <select id="zoom-select" title="Zoom (Ctrl + rueda del ratón)"></select>
+        <button class="zbtn" id="zoom-in" title="Acercar (Ctrl + +)">+</button>
+        <button class="zbtn wide" id="zoom-fit" title="Ajustar a la ventana (Ctrl + 0)">Ajustar</button>
+        <button class="zbtn wide" id="zoom-100" title="Tamaño real (Ctrl + 1)">1:1</button>
+      </div>
+      <span class="keys">Ctrl + rueda: zoom · Supr borra · Ctrl+Z deshace</span>
+    </footer>
+
+    <textarea id="text-editor" spellcheck="false" hidden></textarea>
+    <div id="toast" hidden></div>
+    <div id="menu" hidden></div>
+    <div id="confirm" hidden>
+      <div class="cf-card" role="dialog" aria-labelledby="cf-title">
+        <img class="cf-logo" alt="" />
+        <h2 id="cf-title">¿Guardar los cambios?</h2>
+        <p>Si cierras sin guardar, perderás lo que has editado en esta captura.</p>
+        <div class="cf-actions">
+          <button class="btn ghost" id="cf-discard">No guardar</button>
+          <span class="grow"></span>
+          <button class="btn" id="cf-cancel">Cancelar</button>
+          <button class="btn primary" id="cf-save">Guardar</button>
+        </div>
+      </div>
+    </div>
+    <div id="resize-pop" class="pop" hidden>
+      <h3>Redimensionar imagen</h3>
+      <div class="pop-row">
+        <label>Ancho (px)<input type="number" id="rs-w" min="1" max="16000" /></label>
+        <label>Alto (px)<input type="number" id="rs-h" min="1" max="16000" /></label>
+      </div>
+      <label class="check"><input type="checkbox" id="rs-lock" checked /> Mantener la proporción</label>
+      <div class="presets" id="rs-presets">
+        <button data-pct="25">25 %</button><button data-pct="50">50 %</button><button data-pct="75">75 %</button><button data-pct="150">150 %</button><button data-pct="200">200 %</button>
+      </div>
+      <div class="pop-actions">
+        <button class="btn" id="rs-cancel">Cancelar</button>
+        <button class="btn primary" id="rs-apply">Aplicar</button>
+      </div>
+    </div>
+
+    <script type="module" src="./editor/main.ts"></script>
+  </body>
+</html>

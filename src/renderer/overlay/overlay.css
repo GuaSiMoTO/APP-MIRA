@@ -1,0 +1,247 @@
+html,
+body {
+  overflow: hidden;
+  background: #000;
+  cursor: crosshair;
+}
+body.pick {
+  cursor: pointer;
+}
+
+#bg {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+
+#shade {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.42);
+  pointer-events: none;
+}
+body.has-sel #shade {
+  display: none;
+}
+
+#sel {
+  position: fixed;
+  outline: 1.5px solid #fff;
+  box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.42);
+  pointer-events: none;
+}
+#sel.window {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+}
+#size {
+  position: absolute;
+  left: 0;
+  top: -28px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(20, 20, 24, 0.85);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  max-width: 60vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#size.inside {
+  top: 6px;
+  left: 6px;
+}
+
+#cross-h,
+#cross-v {
+  position: fixed;
+  background: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+}
+#cross-h {
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+#cross-v {
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+
+#loupe {
+  position: fixed;
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #fff, 0 6px 20px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+#toolbar {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 5px;
+  border-radius: 12px;
+  background: rgba(32, 32, 37, 0.94);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(20px);
+  cursor: default;
+}
+
+.seg {
+  display: flex;
+  padding: 2px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.06);
+}
+.seg button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 7px;
+  color: var(--muted);
+}
+.seg button svg {
+  width: 18px;
+  height: 18px;
+}
+.seg button.active {
+  background: var(--accent);
+  color: #fff;
+}
+.seg button.active.video {
+  background: var(--danger);
+}
+
+#toolbar select {
+  height: 34px;
+  padding: 0 8px;
+  border-radius: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+#toolbar select:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+#toolbar select option {
+  background: var(--panel);
+}
+
+#hint {
+  position: fixed;
+  top: 78px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(20, 20, 24, 0.8);
+  color: #e4e4e7;
+  font-size: 12.5px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+#rec-actions {
+  position: fixed;
+  display: flex;
+  gap: 8px;
+  cursor: default;
+}
+#rec-actions[hidden] {
+  display: none;
+}
+#rec-actions .btn {
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#rec-start.red {
+  background: var(--danger) !important;
+}
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+/* ---------- Varias pantallas ---------- */
+.monitors {
+  position: relative;
+  margin: 0 4px;
+}
+.mon {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.45);
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+}
+.mon:hover {
+  background: var(--accent);
+  box-shadow: none;
+}
+.mon.here {
+  box-shadow: inset 0 0 0 2px #b9c8ff;
+}
+.all-btn {
+  height: 30px;
+  padding: 0 10px;
+  margin-left: 2px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 12.5px;
+}
+.all-btn:hover {
+  background: var(--accent);
+}
+#screen-badge {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 22px 34px;
+  border-radius: 20px;
+  background: rgba(20, 20, 24, 0.82);
+  box-shadow: var(--shadow);
+  pointer-events: none;
+  text-align: center;
+}
+#screen-badge b {
+  font-size: 72px;
+  line-height: 1;
+  color: #fff;
+}
+#screen-badge span {
+  font-size: 18px;
+  font-weight: 600;
+}
+#screen-badge small {
+  font-size: 13px;
+  color: #c4c4cc;
+}

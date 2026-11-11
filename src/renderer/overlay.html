@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'" />
+    <title>Captura</title>
+    <link rel="stylesheet" href="./shared/theme.css" />
+    <link rel="stylesheet" href="./overlay/overlay.css" />
+  </head>
+  <body>
+    <img id="bg" alt="" draggable="false" />
+    <div id="shade"></div>
+    <div id="sel" hidden><span id="size"></span></div>
+    <div id="cross-h" hidden></div>
+    <div id="cross-v" hidden></div>
+    <canvas id="loupe" width="132" height="132" hidden></canvas>
+    <div id="toolbar" hidden></div>
+    <div id="hint" hidden></div>
+    <div id="screen-badge" hidden></div>
+    <div id="rec-actions" hidden>
+      <button class="btn primary" id="rec-start">Capturar</button>
+      <button class="btn" id="rec-redo">Volver a seleccionar</button>
+    </div>
+    <script type="module" src="./overlay/main.ts"></script>
+  </body>
+</html>

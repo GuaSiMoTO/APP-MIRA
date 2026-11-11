@@ -1,0 +1,41 @@
+{
+  "name": "mira",
+  "version": "0.1.0",
+  "description": "Mira: capturas de pantalla, grabación de vídeo y OCR para Windows, con editor de anotaciones",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "dist": "electron-vite build && electron-builder --win --config electron-builder.config.cjs",
+    "brand": "electron scripts/make-brand.cjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "author": {
+    "name": "Javier Barroso"
+  },
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "dependencies": {
+    "ffmpeg-static": "^5.3.0",
+    "jsqr": "^1.4.0",
+    "koffi": "^3.3.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "electron": "^45.2.3",
+    "electron-builder": "^26.18.0",
+    "electron-vite": "^6.0.0",
+    "konva": "^10.9.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.7",
+    "vitest": "^5.1.0"
+  },
+  "allowScripts": {
+    "koffi@3.3.7": true,
+    "ffmpeg-static@5.3.0": true,
+    "electron-winstaller@5.4.0": true
+  },
+  "productName": "Mira"
+}

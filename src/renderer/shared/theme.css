@@ -1,0 +1,263 @@
+:root {
+  --bg: #1c1c1f;
+  --panel: #26262b;
+  --panel-2: #2f2f35;
+  --line: rgba(255, 255, 255, 0.09);
+  --text: #f2f2f5;
+  --muted: #a1a1aa;
+  --accent: #5b7cfa;
+  --accent-soft: rgba(91, 124, 250, 0.18);
+  --danger: #ff4c60;
+  --radius: 10px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  font: 13px/1.4 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+  color: var(--text);
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: var(--text);
+  transition: background 0.12s;
+}
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.icon-btn.active {
+  background: var(--accent-soft);
+  color: #b9c8ff;
+}
+.icon-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+  background: none;
+}
+.icon-btn svg {
+  width: 19px;
+  height: 19px;
+}
+
+.btn {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: var(--panel-2);
+  box-shadow: inset 0 0 0 1px var(--line);
+  white-space: nowrap;
+}
+.btn:hover {
+  background: #3a3a42;
+}
+.btn.primary {
+  background: var(--accent);
+  box-shadow: none;
+  color: #fff;
+}
+.btn.primary:hover {
+  background: #6d8bff;
+}
+
+.sep {
+  width: 1px;
+  align-self: stretch;
+  margin: 6px 4px;
+  background: var(--line);
+}
+
+[data-tip] {
+  position: relative;
+}
+
+/* El atributo hidden siempre oculta, aunque el elemento tenga display propio */
+[hidden] {
+  display: none !important;
+}
+
+/* ---------- Selector de color (shared/colorpicker.ts) ---------- */
+.cpick {
+  position: fixed;
+  z-index: 50;
+  width: 256px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #2b2b31;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  user-select: none;
+}
+.cp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+}
+.cp-x {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+.cp-x:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+}
+.cp-x svg {
+  width: 14px;
+  height: 14px;
+}
+.cp-sv {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  line-height: 0;
+}
+.cp-sv canvas {
+  width: 100%;
+  height: 150px;
+  cursor: crosshair;
+}
+.cp-dot {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+.cp-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cp-preview {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 7px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+.cp-hue {
+  flex: 1;
+  height: 12px;
+  border-radius: 6px;
+  appearance: none;
+  background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+  outline: none;
+}
+.cp-hue::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: hsl(var(--h, 0), 100%, 50%);
+  box-shadow: 0 0 0 2px #fff, 0 1px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+.cp-eye {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.08);
+}
+.cp-eye:hover {
+  background: var(--accent);
+}
+.cp-eye svg {
+  width: 17px;
+  height: 17px;
+}
+.cp-fields {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr 1fr 1fr;
+  gap: 6px;
+}
+.cp-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.cp-fields input {
+  width: 100%;
+  height: 28px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font: 12px 'Segoe UI', sans-serif;
+  box-shadow: inset 0 0 0 1px var(--line);
+  user-select: text;
+}
+.cp-fields input:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.cp-fields input::-webkit-inner-spin-button {
+  display: none;
+}
+.cp-recent {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  min-height: 20px;
+}
+.cp-recent span {
+  font-size: 11px;
+  color: var(--muted);
+  margin-right: 2px;
+}
+.cp-recent button {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+/* Logo de Mira en la esquina de las ventanas */
+.app-logo {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  margin: 0 6px 0 2px;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+.app-logo.big {
+  width: 28px;
+  height: 28px;
+}

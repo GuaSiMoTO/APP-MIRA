@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'" />
+    <title>Región de grabación</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: transparent;
+        overflow: hidden;
+      }
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        border: 3px solid var(--frame, #ff4c60);
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body></body>
+</html>

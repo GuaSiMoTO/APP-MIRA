@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; media-src capturas:; style-src 'self' 'unsafe-inline'" />
+    <title>Grabación</title>
+    <link rel="stylesheet" href="./shared/theme.css" />
+    <link rel="stylesheet" href="./player/player.css" />
+  </head>
+  <body>
+    <header id="bar">
+      <span id="name"></span>
+      <span id="meta"></span>
+      <button class="icon-btn" id="close" title="Cerrar (Esc)"></button>
+    </header>
+
+    <main id="stage">
+      <video id="video" playsinline></video>
+      <button id="big-play" title="Reproducir (Espacio)"></button>
+    </main>
+
+    <section id="editor">
+      <div id="controls">
+        <button class="icon-btn" id="play" title="Reproducir / pausa (Espacio)"></button>
+        <span id="time">0:00 / 0:00</span>
+        <span class="grow"></span>
+        <span id="trim-info" title="Duración del fragmento que se exportará"></span>
+        <button class="btn small" id="set-start" title="Usar la posición actual como inicio (I)">Inicio aquí</button>
+        <button class="btn small" id="set-end" title="Usar la posición actual como final (O)">Final aquí</button>
+        <button class="btn small" id="reset-trim" title="Quitar el recorte">Restablecer</button>
+      </div>
+
+      <div id="timeline" title="Arrastra los extremos para recortar · clic para ir a un momento">
+        <div id="strip"></div>
+        <div class="shade" id="shade-l"></div>
+        <div class="shade" id="shade-r"></div>
+        <div id="range"><span class="handle" id="h-start"></span><span class="handle" id="h-end"></span></div>
+        <div id="playhead"></div>
+      </div>
+
+      <div id="export">
+        <label>Formato
+          <div class="seg" id="fmt">
+            <button data-fmt="mp4" class="active">MP4</button>
+            <button data-fmt="gif">GIF</button>
+            <button data-fmt="webm">WebM</button>
+          </div>
+        </label>
+        <label>Resolución <select id="res"></select></label>
+        <label>FPS <select id="fps"></select></label>
+        <label>Calidad
+          <select id="quality">
+            <option value="high">Alta</option>
+            <option value="medium" selected>Media</option>
+            <option value="low">Baja (archivo más ligero)</option>
+          </select>
+        </label>
+        <span class="grow"></span>
+        <div id="progress" hidden><div id="progress-bar"></div><span id="progress-text"></span></div>
+        <button class="btn primary" id="do-export">Exportar…</button>
+      </div>
+      <div id="note"></div>
+    </section>
+    <script type="module" src="./player/main.ts"></script>
+  </body>
+</html>

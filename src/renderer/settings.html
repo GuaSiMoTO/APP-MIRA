@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'" />
+    <title>Ajustes de Mira</title>
+    <link rel="stylesheet" href="./shared/theme.css" />
+    <style>
+      body {
+        background: var(--bg);
+        padding: 22px 26px;
+        user-select: text;
+      }
+      h1 {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin: 0 0 18px;
+        font-size: 20px;
+        font-weight: 600;
+      }
+      section {
+        background: var(--panel);
+        border-radius: var(--radius);
+        box-shadow: inset 0 0 0 1px var(--line);
+        margin-bottom: 14px;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      .row:last-child {
+        border-bottom: 0;
+      }
+      .row .label {
+        flex: 1;
+      }
+      .row small {
+        display: block;
+        color: var(--muted);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 300px;
+      }
+      select,
+      .hk {
+        height: 32px;
+        padding: 0 10px;
+        border-radius: 8px;
+        border: 0;
+        background: var(--panel-2);
+        color: var(--text);
+        font: inherit;
+        box-shadow: inset 0 0 0 1px var(--line);
+      }
+      .hk {
+        min-width: 160px;
+        text-align: center;
+        cursor: pointer;
+      }
+      .hk.listening {
+        box-shadow: inset 0 0 0 2px var(--accent);
+      }
+      .hk.off {
+        color: var(--muted);
+      }
+      .clear {
+        width: 28px;
+        height: 28px;
+        color: var(--muted);
+      }
+      input[type='checkbox'] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--accent);
+      }
+      #msg {
+        min-height: 18px;
+        color: #ffb4bd;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Ajustes</h1>
+    <section>
+      <div class="row">
+        <div class="label">Capturar<small>Púlsalo también durante una grabación para detenerla</small></div>
+        <button class="hk" data-id="hotkey" title="Haz clic y pulsa la nueva combinación"></button>
+      </div>
+      <div class="row">
+        <div class="label">Repetir última región<small>Captura otra vez la misma zona, sin seleccionar</small></div>
+        <button class="hk" data-id="hotkeyRepeat" title="Haz clic y pulsa la nueva combinación"></button>
+        <button class="icon-btn clear" data-clear="hotkeyRepeat" title="Quitar atajo">✕</button>
+      </div>
+      <div class="row">
+        <div class="label">Copiar texto de la pantalla<small>Selecciona una zona y se copia su texto (OCR)</small></div>
+        <button class="hk" data-id="hotkeyText" title="Haz clic y pulsa la nueva combinación"></button>
+        <button class="icon-btn clear" data-clear="hotkeyText" title="Quitar atajo">✕</button>
+      </div>
+      <div class="row">
+        <div class="label">Carpeta de capturas<small id="dir"></small></div>
+        <button class="btn" id="choose">Cambiar…</button>
+      </div>
+      <div class="row">
+        <div class="label">Formato de imagen</div>
+        <select id="format">
+          <option value="png">PNG (sin pérdida)</option>
+          <option value="jpg">JPG (más ligero)</option>
+        </select>
+      </div>
+    </section>
+    <section>
+      <div class="row">
+        <div class="label">Copiar al portapapeles tras capturar</div>
+        <input type="checkbox" id="autoCopy" />
+      </div>
+      <div class="row">
+        <div class="label">Guardar automáticamente en la carpeta</div>
+        <input type="checkbox" id="autoSave" />
+      </div>
+      <div class="row">
+        <div class="label">Iniciar con Windows<small>Solo en la versión instalada</small></div>
+        <input type="checkbox" id="launchAtLogin" />
+      </div>
+    </section>
+    <section>
+      <div class="row">
+        <div class="label">Mostrar la vista previa tras capturar<small>La miniatura flotante con Editar, Copiar, Guardar y Anclar</small></div>
+        <input type="checkbox" id="previewEnabled" />
+      </div>
+      <div class="row">
+        <div class="label">Posición</div>
+        <select id="previewPosition"><option value="left">Abajo a la izquierda</option><option value="right">Abajo a la derecha</option></select>
+      </div>
+      <div class="row">
+        <div class="label">Tamaño</div>
+        <select id="previewSize"><option value="s">Pequeña</option><option value="m">Mediana</option><option value="l">Grande</option></select>
+      </div>
+      <div class="row">
+        <div class="label">Cerrar automáticamente<small>Las grabaciones nunca se cierran solas</small></div>
+        <select id="previewAutoClose"><option value="0">Nunca</option><option value="5">A los 5 s</option><option value="7">A los 7 s</option><option value="10">A los 10 s</option><option value="20">A los 20 s</option></select>
+      </div>
+    </section>
+    <div id="msg"></div>
+    <script type="module" src="./settings/main.ts"></script>
+  </body>
+</html>

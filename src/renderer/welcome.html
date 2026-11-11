@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'" />
+    <title>Mira</title>
+    <link rel="stylesheet" href="./shared/theme.css" />
+    <style>
+      html,
+      body {
+        background: transparent;
+        overflow: hidden;
+      }
+      #card {
+        position: absolute;
+        inset: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        border-radius: 16px;
+        /* El mismo degradado del icono: celeste arriba a la izquierda, azul en el centro y violeta a la derecha */
+        background: radial-gradient(120% 140% at 0% 0%, rgba(0, 170, 255, 0.95) 0%, rgba(0, 170, 255, 0) 45%),
+          linear-gradient(100deg, #0a5dfb 0%, #1d3cf0 40%, #3a22ea 62%, #7a1bf8 100%);
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+        transition: opacity 0.22s, transform 0.22s;
+      }
+      #card.in {
+        opacity: 1;
+        transform: none;
+      }
+      #brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      #logo {
+        width: 58px;
+        height: 58px;
+        /* sombra suave para que el icono destaque sobre el fondo azul */
+        filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+      }
+      #name {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+      #wordmark {
+        height: 30px;
+        display: block;
+      }
+      #tagline {
+        font-size: 12.5px;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        color: #0b1230; /* azul marino de las letras del logo */
+        text-transform: lowercase;
+      }
+      #keys {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 13px;
+      }
+      kbd {
+        min-width: 26px;
+        padding: 4px 9px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.18);
+        box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.25);
+        font: 600 13px 'Segoe UI', sans-serif;
+        color: #fff;
+        text-align: center;
+      }
+      #close {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: rgba(255, 255, 255, 0.8);
+        opacity: 0;
+        transition: opacity 0.15s;
+      }
+      #close svg {
+        width: 12px;
+        height: 12px;
+      }
+      #card:hover #close {
+        opacity: 1;
+      }
+      #close:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="card" title="Haz clic para capturar">
+      <div id="brand">
+        <img id="logo" alt="" />
+        <div id="name">
+          <img id="wordmark" alt="MIRA" />
+          <span id="tagline">capture more</span>
+        </div>
+      </div>
+      <div id="keys"></div>
+      <button id="close" title="Cerrar"></button>
+    </div>
+    <script type="module" src="./welcome/main.ts"></script>
+  </body>
+</html>

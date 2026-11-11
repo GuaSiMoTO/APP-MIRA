@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: capturas:; media-src capturas:; style-src 'self' 'unsafe-inline'" />
+    <title>Historial de capturas</title>
+    <link rel="stylesheet" href="./shared/theme.css" />
+    <style>
+      body {
+        background: var(--bg);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 18px;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+      }
+      h1 {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 600;
+      }
+      #count {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .grow {
+        flex: 1;
+      }
+      .seg {
+        display: flex;
+        padding: 2px;
+        border-radius: 9px;
+        background: rgba(0, 0, 0, 0.3);
+      }
+      .seg button {
+        height: 28px;
+        padding: 0 12px;
+        border-radius: 7px;
+        color: var(--muted);
+      }
+      .seg button.active {
+        background: var(--accent);
+        color: #fff;
+      }
+      #search {
+        width: 220px;
+        height: 32px;
+        padding: 0 10px;
+        border: 0;
+        border-radius: 8px;
+        background: var(--bg);
+        color: var(--text);
+        font: inherit;
+        box-shadow: inset 0 0 0 1px var(--line);
+        user-select: text;
+      }
+      #search:focus {
+        outline: none;
+        box-shadow: inset 0 0 0 1px var(--accent);
+      }
+      main {
+        flex: 1;
+        overflow: auto;
+        padding: 6px 18px 24px;
+      }
+      h2 {
+        margin: 18px 2px 10px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 14px;
+      }
+      .card {
+        position: relative;
+        border-radius: 10px;
+        background: var(--panel);
+        box-shadow: inset 0 0 0 1px var(--line);
+        overflow: hidden;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+      }
+      .card:hover {
+        box-shadow: inset 0 0 0 1px var(--accent);
+      }
+      .thumb {
+        height: 140px;
+        display: grid;
+        place-items: center;
+        background: repeating-conic-gradient(#2a2a30 0 25%, #232328 0 50%) 0 0 / 14px 14px;
+        overflow: hidden;
+      }
+      .thumb img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+      .badge {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 7px;
+        border-radius: 6px;
+        background: rgba(15, 15, 18, 0.8);
+        font-size: 11px;
+      }
+      .badge svg {
+        width: 12px;
+        height: 12px;
+      }
+      .info {
+        margin-top: auto;
+        padding: 8px 10px;
+        font-size: 12px;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        color: var(--muted);
+      }
+      .snippet {
+        padding: 0 10px 8px;
+        font-size: 12px;
+        color: var(--text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .actions {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        display: flex;
+        gap: 4px;
+        opacity: 0;
+        transition: opacity 0.12s;
+      }
+      .card:hover .actions {
+        opacity: 1;
+      }
+      .actions button {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        display: grid;
+        place-items: center;
+        background: rgba(15, 15, 18, 0.85);
+      }
+      .actions button:hover {
+        background: #000;
+      }
+      .actions button.del:hover {
+        background: var(--danger);
+      }
+      .actions svg {
+        width: 15px;
+        height: 15px;
+      }
+      #empty {
+        margin: 80px auto;
+        text-align: center;
+        color: var(--muted);
+        max-width: 360px;
+        line-height: 1.6;
+      }
+      #toast {
+        position: fixed;
+        left: 50%;
+        bottom: 20px;
+        transform: translateX(-50%);
+        padding: 8px 14px;
+        border-radius: 10px;
+        background: rgba(20, 20, 24, 0.95);
+        box-shadow: var(--shadow);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Historial</h1>
+      <span id="count"></span>
+      <span class="grow"></span>
+      <div class="seg" id="filter">
+        <button data-f="all" class="active">Todo</button>
+        <button data-f="image">Imágenes</button>
+        <button data-f="video">Vídeos</button>
+        <button data-f="text">Texto</button>
+      </div>
+      <input id="search" type="search" placeholder="Buscar en el texto reconocido…" />
+      <button class="btn" id="clear" title="Borrar todo el historial">Vaciar</button>
+    </header>
+    <main id="list"></main>
+    <div id="toast" hidden></div>
+    <script type="module" src="./history/main.ts"></script>
+  </body>
+</html>
