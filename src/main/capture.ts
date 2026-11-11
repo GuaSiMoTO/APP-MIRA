@@ -1,8 +1,6 @@
 import { BrowserWindow, desktopCapturer, dialog, nativeImage, screen, type Display, type NativeImage } from 'electron'
 import type { OverlayInit, OverlayState, Rect, ScreenInfo } from '../shared/types'
-import { addImageToHistory } from './history'
-import { copyImage, saveImageToFolder, writeTempImage } from './files'
-import { showPreview } from './preview'
+import { finishImage } from './output'
 import { isRecording, startRecording } from './recorder'
 import { isScrolling, startScrollCapture } from './scroll'
 import { recognizeAndShow } from './textcard'
@@ -185,18 +183,6 @@ function closeOverlays(): Session | null {
 
 export function isCapturing(): boolean {
   return session !== null
-}
-
-/** Copia/guarda según los ajustes y muestra la vista previa. `origin`: posición en pantalla (DIP). */
-export async function finishImage(img: NativeImage, origin?: Rect): Promise<void> {
-  const settings = getSettings()
-  if (settings.autoCopy) await copyImage(img)
-  if (settings.autoSave) await saveImageToFolder(img)
-  const path = await writeTempImage(img)
-  void addImageToHistory(path, img)
-  const size = img.getSize()
-  const thumb = img.resize(size.width > size.height ? { width: 560 } : { height: 400 })
-  showPreview({ kind: 'image', path, src: thumb.toDataURL(), width: size.width, height: size.height, origin })
 }
 
 const isDelay = oneOf([3, 5, 10] as const)

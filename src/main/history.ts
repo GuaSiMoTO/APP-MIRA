@@ -1,21 +1,14 @@
-// Historial de capturas: guarda las capturas, grabaciones y textos de los últimos 30 días
-// (en userData/historial) y los muestra en una ventana con filtros y acciones.
-import { app, BrowserWindow, clipboard, dialog, nativeImage, shell, type NativeImage } from 'electron'
+// Historial de capturas: guarda las capturas, grabaciones y textos de los últimos 30 días en
+// userData/historial (index.json + items/ + thumbs/). Solo datos: la ventana está en historywin.ts.
+import { app, nativeImage, type NativeImage } from 'electron'
 import { existsSync, mkdirSync, statSync } from 'node:fs'
 import { copyFile, rm, unlink, writeFile } from 'node:fs/promises'
 import { extname, join } from 'node:path'
 import type { HistoryItem } from '../shared/types'
-import { openEditor } from './editor'
-import { logError } from './log'
 import { ffmpegPath, runFfmpeg } from './ffmpeg'
-import { historyUrl } from './protocol'
-import { copyImage, saveImageAs, saveVideoAs } from './files'
-import { openPin } from './pin'
-import { openPlayer } from './player'
+import { logError } from './log'
 import { readJson, writeJsonAtomic } from './store'
 import { isNum, isObj, isStr, oneOf } from './validate'
-import { createWindow } from './windows'
-import { handle, on, sendTo } from './ipc'
 
 const KEEP_DAYS = 30
 
@@ -25,7 +18,6 @@ const thumbsDir = () => join(root(), 'thumbs')
 const indexFile = () => join(root(), 'index.json')
 
 let items: HistoryItem[] | null = null
-let win: BrowserWindow | null = null
 
 const isKind = oneOf(['image', 'video', 'text'] as const)
 const isOptNum = (v: unknown) => v === undefined || isNum(v)
@@ -70,7 +62,7 @@ export function flushHistory(): void {
   } catch (err) {
     logError('No se pudo guardar el historial', err)
   }
-  if (win && !win.isDestroyed()) sendTo(win.webContents, 'history:changed')
+  changed?.()
 }
 
 let persistTimer: ReturnType<typeof setTimeout> | null = null
@@ -189,97 +181,41 @@ export async function addTextToHistory(text: string, img: NativeImage): Promise<
   }
 }
 
-export function openHistory(): void {
-  if (win && !win.isDestroyed()) {
-    win.show()
-    win.focus()
-    return
-  }
-  win = createWindow('history', { width: 1040, height: 720, minWidth: 640, minHeight: 420, title: 'Historial de capturas', backgroundColor: '#1c1c1f' })
-  win.once('ready-to-show', () => win?.show())
-  win.on('closed', () => (win = null))
+// ---------- Consultas y cambios (los usa la ventana del historial) ----------
+
+let changed: (() => void) | null = null
+
+/** Aviso cada vez que se guarda el índice (para refrescar la ventana del historial). */
+export function onHistoryChanged(fn: () => void): void {
+  changed = fn
 }
 
-const find = (id: unknown) => (typeof id === 'string' ? load().find((i) => i.id === id) : undefined)
+/** Elementos del historial, del más reciente al más antiguo. */
+export function listHistory(): readonly HistoryItem[] {
+  return load()
+}
 
-export function registerHistoryIpc(): void {
-  handle('history:list', () =>
-    load().map((i) => ({ ...i, thumbUrl: i.thumb ? historyUrl(i.thumb) : '', fileUrl: historyUrl(i.file) }))
-  )
+export function findHistoryItem(id: unknown): HistoryItem | undefined {
+  return typeof id === 'string' ? load().find((i) => i.id === id) : undefined
+}
 
-  on('history:open', (_e, id: unknown) => {
-    const it = find(id)
-    if (!it) return
-    const path = historyPath(it.file)
-    if (it.kind === 'video') openPlayer({ kind: 'video', path, src: historyUrl(it.file), width: 0, height: 0 })
-    else openEditor(path)
-  })
+/** Borra elementos del historial y sus archivos. */
+export async function deleteFromHistory(ids: ReadonlySet<string>): Promise<void> {
+  // Primero se quitan del índice (sin esperas de por medio) y luego se borran sus archivos:
+  // así dos borrados seguidos no pueden devolver al índice elementos ya borrados
+  const removed = load().filter((i) => ids.has(i.id))
+  items = load().filter((i) => !ids.has(i.id))
+  persist()
+  for (const it of removed) await removeFiles(it)
+}
 
-  handle('history:copy', async (_e, id: unknown) => {
-    const it = find(id)
-    if (!it) return false
-    if (it.kind === 'text' && it.text) await clipboard.writeText(it.text)
-    else if (it.kind === 'image') await copyImage(nativeImage.createFromPath(historyPath(it.file)))
-    else return false
-    return true
-  })
-
-  handle('history:save', async (e, id: unknown) => {
-    const it = find(id)
-    const parent = BrowserWindow.fromWebContents(e.sender) ?? undefined
-    if (!it) return null
-    const src = historyPath(it.file)
-    try {
-      return it.kind === 'video' ? await saveVideoAs(parent, src) : await saveImageAs(parent, nativeImage.createFromPath(src))
-    } catch (err) {
-      logError('Historial: no se pudo guardar', err)
-      dialog.showErrorBox('No se pudo guardar', String(err instanceof Error ? err.message : err))
-      return null
-    }
-  })
-
-  on('history:pin', (_e, id: unknown) => {
-    const it = find(id)
-    if (it && it.kind !== 'video') openPin(historyPath(it.file))
-  })
-
-  on('history:reveal', (_e, id: unknown) => {
-    const it = find(id)
-    if (it) shell.showItemInFolder(historyPath(it.file))
-  })
-
-  handle('history:delete', async (_e, raw: unknown) => {
-    if (!Array.isArray(raw)) return false
-    const ids = new Set(raw.filter((x): x is string => typeof x === 'string'))
-    // Primero se quitan del índice (sin esperas de por medio) y luego se borran sus archivos:
-    // así dos borrados seguidos no pueden devolver al índice elementos ya borrados
-    const removed = load().filter((i) => ids.has(i.id))
-    items = load().filter((i) => !ids.has(i.id))
-    persist()
-    for (const it of removed) await removeFiles(it)
-    return true
-  })
-
-  handle('history:clear', async (e) => {
-    const parent = BrowserWindow.fromWebContents(e.sender)
-    const opts = {
-      type: 'warning' as const,
-      buttons: ['Vaciar historial', 'Cancelar'],
-      defaultId: 1,
-      cancelId: 1,
-      title: 'Vaciar historial',
-      message: '¿Borrar todas las capturas del historial?',
-      detail: 'Los archivos que hayas guardado en tu carpeta no se tocan.'
-    }
-    const r = parent ? await dialog.showMessageBox(parent, opts) : await dialog.showMessageBox(opts)
-    if (r.response !== 0) return false
-    if (persistTimer) clearTimeout(persistTimer)
-    persistTimer = null
-    generation++
-    await rm(root(), { recursive: true, force: true })
-    items = null
-    load()
-    flushHistory()
-    return true
-  })
+/** Borra todo el historial (no toca lo guardado en la carpeta del usuario). */
+export async function clearHistory(): Promise<void> {
+  if (persistTimer) clearTimeout(persistTimer)
+  persistTimer = null
+  generation++
+  await rm(root(), { recursive: true, force: true })
+  items = null
+  load()
+  flushHistory()
 }

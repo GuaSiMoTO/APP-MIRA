@@ -24,7 +24,8 @@ vi.mock('electron', () => ({
 }))
 
 const history = await import('../src/main/history')
-history.registerHistoryIpc()
+const { registerHistoryIpc } = await import('../src/main/historywin')
+registerHistoryIpc()
 
 /** Imagen falsa: lo justo para que el historial la guarde. */
 const fakeImage = {

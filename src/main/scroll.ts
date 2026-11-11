@@ -2,7 +2,7 @@
 // principal hace scroll con la rueda del ratón y el renderer une las partes.
 import { BrowserWindow, dialog, screen, type Display, type NativeImage } from 'electron'
 import type { Rect, ScrollInit } from '../shared/types'
-import { finishImage } from './capture'
+import { finishImage } from './output'
 import { absRect, createControlBar, createRegionFrame, physicalCrop, screenSourceId } from './regionui'
 import { sendWheel, setCursorPos } from './winapi'
 import { isNum } from './validate'

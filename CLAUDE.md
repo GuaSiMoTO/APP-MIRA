@@ -35,7 +35,7 @@ errores se registran con `logError` (`log.ts`) en `userData/mira.log`. En el pro
 (`unhandledRejection`, `uncaughtException`, `render-process-gone`). Las ventanas envían sus errores sin capturar por
 `app:error` (`reportError` en `shared/api.ts`).
 
-- Archivos nuevos: con `writeNewFile` (`media.ts`), que nunca sobrescribe (si el nombre existe, usa «Nombre (2)»…).
+- Archivos nuevos: con `writeNewFile` (`files.ts`), que nunca sobrescribe (si el nombre existe, usa «Nombre (2)»…).
   En «Guardar como», el nombre propuesto sale de `freeName`.
 - ffmpeg: siempre con `runFfmpeg` / `spawnFfmpeg`, que lo detienen si deja de informar de progreso.
 - Limpieza: `housekeeping()` (`index.ts`) poda el historial y borra los temporales de más de 24 h, salvo los que tenga
@@ -50,7 +50,8 @@ errores se registran con `logError` (`log.ts`) en `userData/mira.log`. En el pro
 | Archivo | Responsabilidad |
 | --- | --- |
 | `index.ts` | Instancia única, bandeja, tres atajos globales (capturar / repetir región / texto), IPC de ajustes, notificación de inicio |
-| `capture.ts` | Superposición por pantalla (captura congelada), `finishImage` (copiar, guardar, historial, vista previa), `repeatLastRegion` |
+| `capture.ts` | Superposición por pantalla (captura congelada), `repeatLastRegion` |
+| `output.ts` | `finishImage`: qué se hace con una captura terminada (copiar, guardar, historial, vista previa) |
 | `preview.ts` | Vista previa flotante: pila de hasta 4 tarjetas, recuperar la cerrada, posición/tamaño/cierre desde ajustes |
 | `editor.ts` | Ventana del editor e IPC de guardar, copiar, OCR y anclar |
 | `recorder.ts` | Grabación: marco + barra (`regionui.ts`), webcam (se abre **antes** de grabar), clics/teclas vía `inputhook.ts` |
@@ -59,8 +60,11 @@ errores se registran con `logError` (`log.ts`) en `userData/mira.log`. En el pro
 | `textcard.ts` | Tarjeta con el texto reconocido y lectura de QR (`jsqr`) |
 | `pin.ts` | Capturas ancladas (ventanas siempre encima) |
 | `player.ts` | Editor de vídeo: recorte y exportación |
-| `history.ts` | Historial de 30 días en `userData/historial` (`index.json` + `items/` + `thumbs/`) |
-| `media.ts` | Archivos temporales, portapapeles, protocolo `capturas://` (rangos 206 + CORS), ffmpeg (`exportVideo`, `convertVideo`, `fixWebm`) |
+| `history.ts` | Datos del historial de 30 días en `userData/historial` (`index.json` + `items/` + `thumbs/`); sin ventanas |
+| `historywin.ts` | Ventana del historial y su IPC (abre editores, ancladas y el reproductor) |
+| `files.ts` | Carpeta temporal, nombres sin sobrescribir, guardar y «Guardar como», portapapeles, imágenes en bytes |
+| `protocol.ts` | Protocolo `capturas://` (rangos 206 + CORS) y sus URL (`mediaUrl`, `historyUrl`) |
+| `ffmpeg.ts` | ffmpeg: `runFfmpeg`/`spawnFfmpeg` (con vigilante), `probeMedia`, `exportVideo`, `convertVideo`, `fixWebm` |
 | `winapi.ts` | koffi + user32/dwmapi: enumerar ventanas, `SetCursorPos`, rueda, `GetAsyncKeyState` |
 | `regionui.ts` | Marco de región y barras de control (excluidos de la captura con `setContentProtection`) |
 | `settings.ts` | Ajustes en `userData/settings.json` (+ migración desde la antigua carpeta «Capturas») |
