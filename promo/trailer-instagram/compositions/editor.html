@@ -1,0 +1,152 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #07070d;
+      font-family: "Inter", sans-serif;
+      color: #f4f4f8;
+    }
+    #ed-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(900px 700px at 10% 15%, rgba(138, 43, 255, 0.28), transparent 70%),
+        radial-gradient(900px 700px at 95% 85%, rgba(29, 75, 255, 0.24), transparent 70%);
+    }
+    #ed-wrap {
+      position: absolute;
+      inset: 0;
+    }
+    .ed-title {
+      position: absolute;
+      left: 54px;
+      top: 205px;
+      width: 972px;
+      font-family: "Archivo Black", sans-serif;
+      font-weight: 400;
+      font-size: 92px;
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+    .ed-title .acc {
+      color: #3ecbff;
+    }
+    #ed-frame {
+      position: absolute;
+      left: 54px;
+      top: 450px;
+      width: 972px;
+      height: 700px;
+      overflow: hidden;
+      border-radius: 28px;
+      background: #1c1c1f;
+      box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(255, 255, 255, 0.1);
+    }
+    #ed-cam {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1484px;
+      height: 861px;
+    }
+    #ed-cam img {
+      display: block;
+      width: 1484px;
+      height: 861px;
+      max-width: none;
+    }
+    .ed-tag {
+      position: absolute;
+      left: 54px;
+      top: 1196px;
+      width: 972px;
+      display: flex;
+      justify-content: center;
+    }
+    .ed-tag span {
+      display: inline-block;
+      padding: 20px 38px;
+      border-radius: 999px;
+      background: #fff;
+      color: #0b0b12;
+      font-size: 40px;
+      font-weight: 700;
+    }
+  </style>
+
+  <div id="root" data-composition-id="editor" data-width="1080" data-height="1920">
+    <div id="ed-glow"></div>
+    <div id="ed-wrap">
+      <h1 id="ed-t0" class="ed-title" data-layout-allow-overlap>Editor<br /><span class="acc">pro</span></h1>
+      <h1 id="ed-t1" class="ed-title" data-layout-allow-overlap>Flechas, pasos<br /><span class="acc">y foco</span></h1>
+      <h1 id="ed-t2" class="ed-title" data-layout-allow-overlap>Oculta datos<br /><span class="acc">sensibles</span></h1>
+      <h1 id="ed-t3" class="ed-title" data-layout-allow-overlap>Fondos<br /><span class="acc">de estudio</span></h1>
+
+      <div id="ed-frame">
+        <div id="ed-cam" data-layout-ignore>
+          <img src="assets/img/editor.png" alt="Editor de anotaciones de MIRA" />
+        </div>
+      </div>
+
+      <div id="ed-g1" class="ed-tag" data-layout-allow-overlap><span>Flecha · Contador · Spotlight</span></div>
+      <div id="ed-g2" class="ed-tag" data-layout-allow-overlap><span>Pixelar · Censura automática</span></div>
+      <div id="ed-g3" class="ed-tag" data-layout-allow-overlap><span>20 fondos · Sombra</span></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const FW = 972;
+      const FH = 700;
+      // Encadra una zona de la captura (px del PNG) dentro del marco
+      const view = (rx, ry, rw, rh) => {
+        const s = Math.min(FW / rw, FH / rh);
+        return { scale: s, x: (FW - rw * s) / 2 - rx * s, y: (FH - rh * s) / 2 - ry * s };
+      };
+      const full = view(0, 0, 1484, 861);
+      const annotate = view(150, 175, 560, 403);
+      const censor = view(690, 380, 430, 310);
+      const background = view(640, 100, 844, 608);
+
+      gsap.set("#ed-cam", { transformOrigin: "0 0" });
+
+      // Entrada: barrido desde la derecha
+      tl.fromTo("#ed-wrap", { x: 1250, filter: "blur(16px)" }, { x: 0, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0);
+
+      gsap.set(["#ed-t1", "#ed-t2", "#ed-t3"], { opacity: 0 });
+      gsap.set(["#ed-g1", "#ed-g2", "#ed-g3"], { opacity: 0, scale: 0.6 });
+
+      // La cámara recorre el editor: entero → anotaciones → censura → fondo
+      tl.fromTo("#ed-cam", full, { ...annotate, duration: 0.55, ease: "power2.inOut" }, 1.0);
+      tl.to("#ed-cam", { ...censor, duration: 0.55, ease: "power2.inOut" }, 2.4);
+      tl.to("#ed-cam", { ...background, duration: 0.55, ease: "power2.inOut" }, 3.9);
+
+      // Títulos y etiquetas: cambio con desenfoque, sin moverse
+      const swap = (out, inn, at) => {
+        tl.to(out, { opacity: 0, filter: "blur(8px)", duration: 0.15, ease: "power2.in" }, at);
+        tl.fromTo(inn, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power2.out" }, at + 0.16);
+      };
+      swap("#ed-t0", "#ed-t1", 1.0);
+      swap("#ed-t1", "#ed-t2", 2.4);
+      swap("#ed-t2", "#ed-t3", 3.9);
+
+      const tag = (sel, at, prev) => {
+        if (prev) tl.to(prev, { opacity: 0, scale: 0.8, duration: 0.14, ease: "power2.in" }, at - 0.4);
+        tl.to(sel, { opacity: 1, scale: 1, duration: 0.32, ease: "back.out(1.6)" }, at);
+      };
+      tag("#ed-g1", 1.35);
+      tag("#ed-g2", 2.75, "#ed-g1");
+      tag("#ed-g3", 4.25, "#ed-g2");
+
+      // Salida: se aleja y se apaga
+      tl.to("#ed-wrap", { scale: 0.8, opacity: 0, filter: "blur(12px)", duration: 0.26, ease: "power3.in", transformOrigin: "540px 800px" }, 5.52);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["editor"] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,134 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #07070d;
+      font-family: "Inter", sans-serif;
+      color: #f4f4f8;
+    }
+    #hook-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(900px 700px at 15% 20%, rgba(6, 194, 255, 0.22), transparent 70%),
+        radial-gradient(900px 800px at 90% 70%, rgba(138, 43, 255, 0.28), transparent 70%);
+    }
+    #hook-wrap {
+      position: absolute;
+      inset: 0;
+    }
+    #hook-title {
+      position: absolute;
+      left: 54px;
+      top: 215px;
+      width: 972px;
+      font-family: "Archivo Black", sans-serif;
+      font-weight: 400;
+      font-size: 108px;
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+    #hook-title span {
+      display: inline-block;
+    }
+    #hook-mas {
+      color: #3ecbff;
+    }
+    #hook-card {
+      position: absolute;
+      left: 54px;
+      top: 560px;
+      width: 972px;
+      height: 618px;
+    }
+    #hook-crop {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      border-radius: 30px;
+      box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(255, 255, 255, 0.1);
+    }
+    /* Zona del lienzo del editor (85,119 · 1078×685) a escala 0,9017 */
+    #hook-img {
+      position: absolute;
+      left: -76.6px;
+      top: -107.3px;
+      width: 1338.1px;
+      height: 776.4px;
+      max-width: none;
+    }
+    .hook-br {
+      position: absolute;
+      width: 96px;
+      height: 96px;
+      border: 14px solid #fff;
+    }
+    #hook-br1 { left: -30px; top: -30px; border-right: 0; border-bottom: 0; border-radius: 34px 0 0 0; }
+    #hook-br2 { right: -30px; top: -30px; border-left: 0; border-bottom: 0; border-radius: 0 34px 0 0; }
+    #hook-br3 { left: -30px; bottom: -30px; border-right: 0; border-top: 0; border-radius: 0 0 0 34px; }
+    #hook-br4 { right: -30px; bottom: -30px; border-left: 0; border-top: 0; border-radius: 0 0 34px 0; }
+    #hook-sub {
+      position: absolute;
+      left: 54px;
+      top: 1240px;
+      width: 972px;
+      font-size: 44px;
+      font-weight: 700;
+      color: #c9c9d6;
+    }
+  </style>
+
+  <div id="root" data-composition-id="hook" data-width="1080" data-height="1920">
+    <div id="hook-glow"></div>
+    <div id="hook-wrap">
+      <h1 id="hook-title">
+        <span>Tus</span> <span>capturas</span><br />
+        <span id="hook-w3">merecen</span> <span id="hook-mas">más</span>
+      </h1>
+      <div id="hook-card">
+        <div id="hook-crop">
+          <img id="hook-img" src="assets/img/editor.png" alt="Captura anotada en el editor de MIRA" />
+        </div>
+        <div id="hook-br1" class="hook-br" data-layout-ignore></div>
+        <div id="hook-br2" class="hook-br" data-layout-ignore></div>
+        <div id="hook-br3" class="hook-br" data-layout-ignore></div>
+        <div id="hook-br4" class="hook-br" data-layout-ignore></div>
+      </div>
+      <p id="hook-sub">Anota, censura y comparte.</p>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+
+      // «merecen más»: palabra a palabra, sin desplazamiento
+      tl.fromTo("#hook-w3", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power2.out" }, 0.3);
+      tl.fromTo("#hook-mas", { opacity: 0, filter: "blur(8px)", scale: 1.25 }, { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.3, ease: "expo.out" }, 0.48);
+
+      // Los corchetes del logo encajan en la captura
+      const from = [
+        ["#hook-br1", -130, -130],
+        ["#hook-br2", 130, -130],
+        ["#hook-br3", -130, 130],
+        ["#hook-br4", 130, 130],
+      ];
+      from.forEach(([sel, x, y]) => {
+        tl.fromTo(sel, { x, y, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.32, ease: "expo.out" }, 0.62);
+      });
+      tl.fromTo("#hook-card", { scale: 1 }, { scale: 0.965, duration: 0.1, ease: "power2.out" }, 0.86);
+      tl.to("#hook-card", { scale: 1, duration: 0.45, ease: "elastic.out(1, 0.6)" }, 0.96);
+
+      tl.fromTo("#hook-sub", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power2.out" }, 0.8);
+
+      // Salida: se atraviesa la captura
+      tl.fromTo("#hook-wrap", { scale: 1, opacity: 1, filter: "blur(0px)" }, { scale: 1.9, opacity: 0, filter: "blur(14px)", duration: 0.34, ease: "power3.in", transformOrigin: "540px 870px" }, 2.44);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["hook"] = tl;
+    })();
+  </script>
+</template>

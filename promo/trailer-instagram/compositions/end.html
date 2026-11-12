@@ -1,0 +1,148 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #07070d;
+      font-family: "Inter", sans-serif;
+      color: #f4f4f8;
+    }
+    #end-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(800px 800px at 50% 34%, rgba(29, 75, 255, 0.42), transparent 70%),
+        radial-gradient(900px 700px at 90% 80%, rgba(138, 43, 255, 0.22), transparent 70%);
+    }
+    #end-flood {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg, #06c2ff 0%, #1d4bff 45%, #8a2bff 100%);
+    }
+    #end-icon {
+      position: absolute;
+      left: 340px;
+      top: 400px;
+      width: 400px;
+      height: 400px;
+    }
+    .end-br {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border: 18px solid #fff;
+    }
+    #end-br1 { left: 300px; top: 360px; border-right: 0; border-bottom: 0; border-radius: 44px 0 0 0; }
+    #end-br2 { left: 660px; top: 360px; border-left: 0; border-bottom: 0; border-radius: 0 44px 0 0; }
+    #end-br3 { left: 300px; top: 720px; border-right: 0; border-top: 0; border-radius: 0 0 0 44px; }
+    #end-br4 { left: 660px; top: 720px; border-left: 0; border-top: 0; border-radius: 0 0 44px 0; }
+    #end-word {
+      position: absolute;
+      left: 250px;
+      top: 850px;
+      width: 580px;
+      height: 144px;
+    }
+    #end-word img {
+      display: block;
+      width: 580px;
+      height: 144px;
+    }
+    #end-tag {
+      position: absolute;
+      left: 54px;
+      top: 1010px;
+      width: 972px;
+      text-align: center;
+      font-size: 50px;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      color: #c9c9d6;
+    }
+    #end-cta {
+      position: absolute;
+      left: 140px;
+      top: 1130px;
+      width: 800px;
+      height: 124px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: linear-gradient(100deg, #06c2ff, #1d4bff 50%, #8a2bff);
+      box-shadow: 0 24px 70px rgba(29, 75, 255, 0.55);
+      font-family: "Archivo Black", sans-serif;
+      font-weight: 400;
+      font-size: 50px;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+    #end-feat {
+      position: absolute;
+      left: 54px;
+      top: 1280px;
+      width: 972px;
+      text-align: center;
+      font-size: 36px;
+      font-weight: 700;
+      color: #a9a9ba;
+    }
+  </style>
+
+  <div id="root" data-composition-id="end" data-width="1080" data-height="1920">
+    <div id="end-glow"></div>
+    <div id="end-flood"></div>
+
+    <div id="end-br1" class="end-br" data-layout-ignore></div>
+    <div id="end-br2" class="end-br" data-layout-ignore></div>
+    <div id="end-br3" class="end-br" data-layout-ignore></div>
+    <div id="end-br4" class="end-br" data-layout-ignore></div>
+
+    <img id="end-icon" src="assets/img/mira-icon-1024.png" alt="Icono de MIRA" />
+    <div id="end-word"><img src="assets/img/mira-wordmark-white.png" alt="MIRA" /></div>
+    <p id="end-tag">capture more</p>
+    <div id="end-cta">Gratis para Windows</div>
+    <p id="end-feat">Capturas · Vídeo · OCR</p>
+  </div>
+
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const LAND = 0.55; // el icono aterriza aquí (21,75 s del vídeo)
+
+      gsap.set(["#end-icon", "#end-tag", "#end-feat"], { opacity: 0 });
+      gsap.set("#end-cta", { opacity: 0, scale: 0.6 });
+      gsap.set("#end-word", { clipPath: "inset(0% 100% 0% 0%)" });
+
+      // El color de la escena anterior se retira
+      tl.fromTo("#end-flood", { opacity: 1 }, { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 0.05);
+
+      // Los corchetes cierran la selección sobre el punto donde cae el icono
+      [
+        ["#end-br1", -420, -520],
+        ["#end-br2", 420, -520],
+        ["#end-br3", -420, 760],
+        ["#end-br4", 420, 760],
+      ].forEach(([sel, x, y]) => {
+        tl.fromTo(sel, { x, y, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.5, ease: "power3.inOut" }, 0.05);
+        tl.to(sel, { opacity: 0, scale: 0.7, duration: 0.14, ease: "power2.in" }, LAND);
+      });
+
+      // El icono real aterriza con el golpe
+      tl.fromTo("#end-icon", { scale: 0.35, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.6)" }, LAND - 0.05);
+
+      // La palabra «MIRA» se descubre de izquierda a derecha
+      tl.to("#end-word", { clipPath: "inset(0% 0% 0% 0%)", duration: 0.42, ease: "power3.out" }, 0.95);
+      tl.fromTo("#end-tag", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power2.out" }, 1.4);
+
+      // Llamada a la acción (1,90 s)
+      tl.to("#end-cta", { opacity: 1, scale: 1, duration: 0.36, ease: "back.out(1.6)" }, 1.9);
+      tl.fromTo("#end-feat", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power2.out" }, 2.3);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["end"] = tl;
+    })();
+  </script>
+</template>

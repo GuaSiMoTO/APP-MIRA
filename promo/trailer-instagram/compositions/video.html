@@ -1,0 +1,229 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #07070d;
+      font-family: "Inter", sans-serif;
+      color: #f4f4f8;
+    }
+    #vid-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(900px 800px at 50% 30%, rgba(255, 71, 87, 0.2), transparent 70%),
+        radial-gradient(900px 700px at 90% 90%, rgba(29, 75, 255, 0.22), transparent 70%);
+    }
+    #vid-a,
+    #vid-b {
+      position: absolute;
+      inset: 0;
+    }
+    /* Parte A: grabación */
+    #vid-rec {
+      position: absolute;
+      left: 54px;
+      top: 250px;
+      width: 972px;
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      font-family: "Space Mono", monospace;
+      font-size: 60px;
+      font-weight: 700;
+    }
+    #vid-dot {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: #ff4757;
+      box-shadow: 0 0 50px rgba(255, 71, 87, 0.8);
+    }
+    #vid-time {
+      color: #c9c9d6;
+    }
+    #vid-big {
+      position: absolute;
+      left: 54px;
+      top: 400px;
+      width: 972px;
+      font-family: "Archivo Black", sans-serif;
+      font-weight: 400;
+      font-size: 236px;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+    }
+    #vid-line {
+      position: absolute;
+      left: 54px;
+      top: 650px;
+      width: 972px;
+      font-family: "Archivo Black", sans-serif;
+      font-weight: 400;
+      font-size: 110px;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: #ff5d6c;
+    }
+    #vid-chips {
+      position: absolute;
+      left: 54px;
+      top: 850px;
+      width: 972px;
+      display: flex;
+      gap: 24px;
+    }
+    .vid-chip {
+      padding: 22px 44px;
+      border-radius: 999px;
+      background: #fff;
+      color: #0b0b12;
+      font-size: 54px;
+      font-weight: 900;
+    }
+    #vid-extra {
+      position: absolute;
+      left: 54px;
+      top: 1020px;
+      width: 972px;
+      font-size: 48px;
+      font-weight: 700;
+      color: #c9c9d6;
+    }
+    /* Parte B: OCR */
+    #vid-title {
+      position: absolute;
+      left: 54px;
+      top: 205px;
+      width: 972px;
+      font-family: "Archivo Black", sans-serif;
+      font-weight: 400;
+      font-size: 88px;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+    #vid-title .acc {
+      color: #3ecbff;
+    }
+    /* Tarjeta real del OCR (380×290) a 2,2× */
+    #vid-card {
+      position: absolute;
+      left: 122px;
+      top: 540px;
+      width: 836px;
+      height: 638px;
+      overflow: hidden;
+      border-radius: 34px;
+      box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6);
+    }
+    #vid-card img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 836px;
+      height: 638px;
+    }
+    #vid-scan {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 836px;
+      height: 10px;
+      background: #3ecbff;
+      box-shadow: 0 0 60px 20px rgba(62, 203, 255, 0.55);
+    }
+    #vid-note {
+      position: absolute;
+      left: 54px;
+      top: 1220px;
+      width: 972px;
+      text-align: center;
+      font-size: 44px;
+      font-weight: 700;
+      color: #c9c9d6;
+    }
+  </style>
+
+  <div id="root" data-composition-id="video" data-width="1080" data-height="1920">
+    <div id="vid-glow"></div>
+
+    <div id="vid-a">
+      <div id="vid-rec">
+        <div id="vid-dot"></div>
+        <span>REC</span>
+        <span id="vid-time">00:00.00</span>
+      </div>
+      <div id="vid-big">Graba</div>
+      <div id="vid-line">tu pantalla</div>
+      <div id="vid-chips">
+        <div id="vid-c1" class="vid-chip">MP4</div>
+        <div id="vid-c2" class="vid-chip">GIF</div>
+        <div id="vid-c3" class="vid-chip">WebM</div>
+      </div>
+      <p id="vid-extra">Clics, teclas y webcam.</p>
+    </div>
+
+    <div id="vid-b">
+      <h1 id="vid-title" data-layout-allow-overlap>Copia el texto<br />de <span class="acc">cualquier<br />imagen</span></h1>
+      <div id="vid-card" data-layout-allow-overlap>
+        <img src="assets/img/ocr.png" alt="Tarjeta de MIRA con el texto reconocido" />
+        <div id="vid-scan" data-layout-ignore></div>
+      </div>
+      <p id="vid-note" data-layout-allow-overlap>OCR local. También lee QR.</p>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const time = document.getElementById("vid-time");
+
+      gsap.set("#vid-b", { opacity: 0 });
+
+      // Parte A — «GRABA» golpea al entrar
+      tl.fromTo("#vid-big", { scale: 1.6, opacity: 0, filter: "blur(12px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "expo.out", transformOrigin: "0% 50%" }, 0);
+      tl.fromTo("#vid-rec", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 0.1);
+      tl.fromTo("#vid-line", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power2.out" }, 0.3);
+      tl.fromTo(["#vid-c1", "#vid-c2", "#vid-c3"], { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.8)", stagger: 0.09 }, 0.6);
+      tl.fromTo("#vid-extra", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power2.out" }, 0.8);
+
+      // Cronómetro de la grabación: depende solo del tiempo de la escena
+      const clock = { t: 0 };
+      tl.to(clock, {
+        t: 2.3,
+        duration: 2.3,
+        ease: "none",
+        onUpdate: () => {
+          const s = Math.floor(clock.t);
+          const c = Math.floor((clock.t - s) * 100);
+          time.textContent = "00:0" + s + "." + (c < 10 ? "0" + c : c);
+        },
+      }, 0);
+      // El punto rojo late una vez por segundo (dos veces en total)
+      tl.fromTo("#vid-dot", { scale: 1 }, { scale: 1.3, duration: 0.12, ease: "power2.out" }, 0.5);
+      tl.to("#vid-dot", { scale: 1, duration: 0.3, ease: "power2.in" }, 0.62);
+      tl.to("#vid-dot", { scale: 1.3, duration: 0.12, ease: "power2.out" }, 1.5);
+      tl.to("#vid-dot", { scale: 1, duration: 0.3, ease: "power2.in" }, 1.62);
+
+      // Cambio a la parte B con desenfoque
+      tl.to("#vid-a", { opacity: 0, filter: "blur(10px)", duration: 0.16, ease: "power2.in" }, 2.3);
+      tl.to("#vid-b", { opacity: 1, duration: 0.01 }, 2.46);
+      tl.fromTo("#vid-title", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power2.out" }, 2.46);
+      tl.fromTo("#vid-card", { opacity: 0, scale: 0.86 }, { opacity: 1, scale: 1, duration: 0.45, ease: "expo.out" }, 2.52);
+      // La línea de lectura recorre la tarjeta
+      tl.fromTo("#vid-scan", { y: -20, opacity: 1 }, { y: 640, duration: 0.95, ease: "power1.inOut" }, 2.65);
+      tl.to("#vid-scan", { opacity: 0, duration: 0.1 }, 3.55);
+      tl.fromTo("#vid-note", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power2.out" }, 2.85);
+
+      // Salida: se apaga antes de la pregunta
+      tl.to("#vid-b", { opacity: 0, scale: 0.9, filter: "blur(12px)", duration: 0.22, ease: "power3.in", transformOrigin: "540px 800px" }, 4.56);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["video"] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,234 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #07070d;
+      font-family: "Inter", sans-serif;
+      color: #f4f4f8;
+    }
+    #cap-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(900px 700px at 85% 15%, rgba(29, 75, 255, 0.3), transparent 70%),
+        radial-gradient(800px 700px at 10% 80%, rgba(6, 194, 255, 0.16), transparent 70%);
+    }
+    #cap-wrap {
+      position: absolute;
+      inset: 0;
+    }
+    #cap-title {
+      position: absolute;
+      left: 54px;
+      top: 205px;
+      width: 972px;
+      font-family: "Archivo Black", sans-serif;
+      font-weight: 400;
+      font-size: 96px;
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+    #cap-title span {
+      display: inline-block;
+    }
+    #cap-title .acc {
+      color: #3ecbff;
+    }
+    /* Barra real del overlay (398,14 · 604×52) a 1,6× */
+    #cap-bar {
+      position: absolute;
+      left: 57px;
+      top: 455px;
+      width: 966px;
+      height: 83px;
+      overflow: hidden;
+      border-radius: 26px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+    }
+    #cap-bar img {
+      position: absolute;
+      left: -636.8px;
+      top: -22.4px;
+      width: 2240px;
+      height: 1248px;
+      max-width: none;
+    }
+    /* Overlay real completo a 0,6943× */
+    #cap-frame {
+      position: absolute;
+      left: 54px;
+      top: 580px;
+      width: 972px;
+      height: 541px;
+      border-radius: 26px;
+      box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(255, 255, 255, 0.1);
+    }
+    #cap-shot {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      border-radius: 26px;
+    }
+    #cap-shot img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 972px;
+      height: 541.5px;
+      max-width: none;
+    }
+    /* Selección sobre «Ingresos por mes» (185,335 → 866,587 en la captura) */
+    #cap-sel {
+      position: absolute;
+      left: 128px;
+      top: 232px;
+      width: 473px;
+      height: 175px;
+    }
+    #cap-fill {
+      position: absolute;
+      inset: 0;
+      background: rgba(62, 203, 255, 0.22);
+    }
+    #cap-border {
+      position: absolute;
+      inset: -3px;
+      border: 5px solid #3ecbff;
+      border-radius: 6px;
+      box-shadow: 0 0 40px rgba(62, 203, 255, 0.6);
+    }
+    #cap-size {
+      position: absolute;
+      left: 128px;
+      top: 420px;
+      padding: 8px 16px;
+      border-radius: 10px;
+      background: #111118;
+      font-family: "Space Mono", monospace;
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+    }
+    #cap-flash {
+      position: absolute;
+      inset: 0;
+      border-radius: 26px;
+      background: #fff;
+    }
+    #cap-cursor {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 72px;
+      height: 72px;
+    }
+    #cap-keys {
+      position: absolute;
+      left: 54px;
+      top: 1178px;
+      width: 972px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+    }
+    .cap-key {
+      height: 112px;
+      min-width: 112px;
+      padding: 0 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 22px;
+      background: linear-gradient(#2a2a36, #1b1b25);
+      box-shadow: 0 8px 0 #0d0d14, 0 0 0 2px rgba(255, 255, 255, 0.14);
+      font-size: 50px;
+      font-weight: 700;
+    }
+    .cap-plus {
+      font-size: 50px;
+      font-weight: 700;
+      color: #8d8da0;
+    }
+  </style>
+
+  <div id="root" data-composition-id="capture" data-width="1080" data-height="1920">
+    <div id="cap-glow"></div>
+    <div id="cap-wrap">
+      <h1 id="cap-title">
+        <span id="cap-w1">Captura</span><br />
+        <span id="cap-w2">lo que</span> <span id="cap-w3" class="acc">quieras</span>
+      </h1>
+
+      <div id="cap-bar">
+        <img src="assets/img/overlay.png" alt="Barra de MIRA: Foto, Vídeo y Texto" />
+      </div>
+
+      <div id="cap-frame">
+        <div id="cap-shot">
+          <img src="assets/img/overlay.png" alt="Overlay de captura de MIRA" />
+        </div>
+        <div id="cap-sel" data-layout-ignore>
+          <div id="cap-fill"></div>
+          <div id="cap-border"></div>
+        </div>
+        <div id="cap-size" data-layout-ignore>681 × 252</div>
+        <div id="cap-flash" data-layout-ignore></div>
+        <svg id="cap-cursor" data-layout-ignore viewBox="0 0 24 24">
+          <path d="M4 2 L4 20 L9 15.5 L12.2 22.5 L15.2 21.2 L12 14.4 L19 14.4 Z" fill="#fff" stroke="#0b0b12" stroke-width="1.6" stroke-linejoin="round" />
+        </svg>
+      </div>
+
+      <div id="cap-keys">
+        <div id="cap-k1" class="cap-key">Ctrl</div>
+        <div class="cap-plus">+</div>
+        <div id="cap-k2" class="cap-key">Mayús</div>
+        <div class="cap-plus">+</div>
+        <div id="cap-k3" class="cap-key">S</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+
+      // Entrada: llega desde dentro del zoom de la escena anterior
+      tl.fromTo("#cap-wrap", { scale: 0.72, opacity: 0, filter: "blur(14px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "expo.out", transformOrigin: "540px 850px" }, 0);
+
+      // Estados iniciales
+      gsap.set("#cap-fill", { scaleX: 0, scaleY: 0, transformOrigin: "0 0" });
+      gsap.set(["#cap-border", "#cap-size", "#cap-flash"], { opacity: 0 });
+      gsap.set(["#cap-k1", "#cap-k2", "#cap-k3"], { opacity: 0, scale: 0.5 });
+      gsap.set(".cap-plus", { opacity: 0 });
+
+      // El cursor entra, pulsa en 0,50 s y arrastra hasta 1,40 s
+      tl.fromTo("#cap-cursor", { x: 1010, y: 620 }, { x: 128, y: 232, duration: 0.42, ease: "power3.out" }, 0.06);
+      tl.to("#cap-cursor", { scale: 0.82, duration: 0.06, transformOrigin: "0 0" }, 0.5);
+      tl.to("#cap-cursor", { x: 601, y: 407, duration: 0.9, ease: "power2.inOut" }, 0.5);
+      tl.to("#cap-fill", { scaleX: 1, scaleY: 1, duration: 0.9, ease: "power2.inOut" }, 0.5);
+
+      // Suelta en 1,45 s: destello y marco
+      tl.to("#cap-cursor", { scale: 1, duration: 0.08 }, 1.45);
+      tl.fromTo("#cap-flash", { opacity: 0.9 }, { opacity: 0, duration: 0.32, ease: "power2.out", immediateRender: false }, 1.45);
+      tl.to("#cap-border", { opacity: 1, duration: 0.05 }, 1.45);
+      tl.fromTo("#cap-size", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.2, ease: "power3.out" }, 1.5);
+      tl.to("#cap-cursor", { x: 760, y: 640, opacity: 0, duration: 0.4, ease: "power2.in" }, 1.6);
+
+      // Atajo: una tecla tras otra
+      tl.to("#cap-k1", { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.8)" }, 1.9);
+      tl.to(".cap-plus", { opacity: 1, duration: 0.15, stagger: 0.15 }, 1.98);
+      tl.to("#cap-k2", { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.8)" }, 2.05);
+      tl.to("#cap-k3", { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.8)" }, 2.2);
+
+      // Salida: barrido a la izquierda
+      tl.to("#cap-wrap", { x: -1250, filter: "blur(16px)", duration: 0.28, ease: "power3.in" }, 2.9);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["capture"] = tl;
+    })();
+  </script>
+</template>
