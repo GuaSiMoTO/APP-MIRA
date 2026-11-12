@@ -9,6 +9,10 @@ comentarios del código en español.
 editor de vídeo. Electron 45 + TypeScript + electron-vite; el editor usa Konva. Es una app **original** inspirada en el
 flujo de la Herramienta Recortes y en CleanShot X: no se descompilan ni se copian código, iconos ni recursos de esas apps.
 
+Documentación: manual de usuario en `docs/MIRA-Product-Documentation.md`; guía técnica con las specs, los criterios de
+aceptación (`CAP-01`…) y su trazabilidad a los tests en `docs/MIRA-Guia-Tecnica.md`. Si un cambio altera el
+comportamiento descrito allí, actualiza la spec y la tabla de la sección 12.3.
+
 ## Comandos
 
 ```bash

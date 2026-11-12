@@ -131,3 +131,6 @@ npm run dist       # instalador en dist/
 
 La guía completa (funciones, guía de uso, atajos, ajustes, flujos de trabajo, solución de problemas y roadmap) está en
 [docs/MIRA-Product-Documentation.md](docs/MIRA-Product-Documentation.md).
+
+Cómo está hecho el código (arquitectura, tecnologías, especificaciones por funcionalidad, criterios de aceptación y
+pruebas) está en [docs/MIRA-Guia-Tecnica.md](docs/MIRA-Guia-Tecnica.md).

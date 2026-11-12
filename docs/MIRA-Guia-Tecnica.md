@@ -1,19 +1,20 @@
 # MIRA – Guía técnica del código
 
-<p align="center"><img src="../resources/brand/mira-logo.png" alt="Logo de MIRA" width="320" /></p>
+<p align="center"><img src="../resources/brand/mira-logo.png" alt="Logo de MIRA" width="420" /></p>
 
 > **Para quién es este documento.** Para alguien que empieza en el desarrollo guiado por especificaciones
-> (*spec-driven development*) y necesita entender **qué hace el código de Mira, cómo está organizado y por qué**.
+> (*spec-driven development*) y necesita entender **qué hace el código de MIRA, cómo está organizado y por qué**.
 > No hace falta saber Electron: cada concepto se explica la primera vez que aparece.
 >
 > **Qué no es.** No es el manual de usuario (eso está en [MIRA-Product-Documentation.md](MIRA-Product-Documentation.md))
 > ni la guía rápida para trabajar en el repositorio (eso está en [CLAUDE.md](../CLAUDE.md)).
 
-Versión 0.1.0 · noviembre de 2026.
+Versión 0.1.0 · noviembre de 2026 · **Verificado contra el código del commit `b2a0d43`.** Si el código ha cambiado
+después de ese commit (`git log b2a0d43..HEAD -- src`), revisa las secciones afectadas antes de fiarte de ellas.
 
 ## Índice
 
-1. [Mira en una página](#1-mira-en-una-página)
+1. [MIRA en una página](#1-mira-en-una-página)
 2. [Cómo leer este documento (spec-driven)](#2-cómo-leer-este-documento-spec-driven)
 3. [Glosario](#3-glosario)
 4. [Tecnologías y por qué se eligieron](#4-tecnologías-y-por-qué-se-eligieron)
@@ -28,13 +29,13 @@ Versión 0.1.0 · noviembre de 2026.
 13. [Compilar, ejecutar y distribuir](#13-compilar-ejecutar-y-distribuir)
 14. [Cómo añadir una funcionalidad nueva paso a paso](#14-cómo-añadir-una-funcionalidad-nueva-paso-a-paso)
 15. [Trampas conocidas](#15-trampas-conocidas)
-16. [Chuleta para explicar Mira en 2 minutos](#16-chuleta-para-explicar-mira-en-2-minutos)
+16. [Chuleta para explicar MIRA en 2 minutos](#16-chuleta-para-explicar-mira-en-2-minutos)
 
 ---
 
-## 1. Mira en una página
+## 1. MIRA en una página
 
-**Mira** es una aplicación de escritorio para **Windows** que vive en la **bandeja del sistema** (los iconos junto al
+**MIRA** es una aplicación de escritorio para **Windows** que vive en la **bandeja del sistema** (los iconos junto al
 reloj). Con un atajo de teclado (`Ctrl + Mayús + S`) congela la pantalla y deja elegir qué hacer:
 
 | Modo | Qué produce | Dónde acaba |
@@ -75,8 +76,16 @@ flowchart LR
   (`src/shared/ipc.ts`). Son la «frontera» que el compilador vigila: si un lado cambia y el otro no, no compila.
 - La **implementación** está en `src/main` (proceso principal) y `src/renderer` (ventanas).
 - Las **pruebas** están en `tests/` (Vitest) y en las pruebas de humo dentro de la app.
+- La **trazabilidad** une las dos puntas: cada criterio de aceptación tiene un identificador (`CAP-01`, `REC-03`…) y
+  dice cómo se verifica. El resumen de qué está cubierto por tests está en la
+  [sección 12.3](#123-trazabilidad-criterios--pruebas).
 
-> **Idea clave para un junior:** en Mira el contrato no es un documento aparte que se queda desactualizado: es
+> **Aviso honesto: estas specs se escribieron después del código.** MIRA no nació con especificaciones; las de la
+> sección 9 describen lo que el código ya hace (*specs as-built*) y sirven de punto de partida. A partir de ahora el
+> orden es el del diagrama: primero se escribe o se actualiza la spec, luego el código. La
+> [sección 14](#14-cómo-añadir-una-funcionalidad-nueva-paso-a-paso) explica cómo.
+
+> **Idea clave para un junior:** en MIRA el contrato no es un documento aparte que se queda desactualizado: es
 > **código TypeScript**. Cambiar la spec de un mensaje entre ventanas = cambiar su tipo en `ipc.ts`, y el compilador te
 > señala todos los sitios que tienes que actualizar.
 
@@ -84,7 +93,7 @@ flowchart LR
 
 ## 3. Glosario
 
-| Término | Significado en Mira |
+| Término | Significado en MIRA |
 | --- | --- |
 | **Proceso principal** (*main*) | El programa Node.js que arranca Electron. No tiene interfaz; crea ventanas, guarda archivos, habla con Windows. Código en `src/main/`. |
 | **Renderer** (proceso de ventana) | Cada ventana es una página web (HTML + TypeScript) aislada en su propio proceso de Chromium. Código en `src/renderer/`. |
@@ -94,11 +103,11 @@ flowchart LR
 | **Superposición** (*overlay*) | La ventana a pantalla completa, sin bordes, que muestra la captura congelada para elegir la región. Una por monitor. |
 | **Vista previa** (*preview*) | La tarjeta flotante que aparece en una esquina tras capturar. Se apilan hasta 4. |
 | **Anclada** (*pin*) | Captura en una ventana siempre encima de las demás. |
-| **DIP** | *Device Independent Pixels*: píxeles «lógicos». Con el zoom de Windows al 150 %, 100 DIP = 150 píxeles físicos. Mira convierte entre ambos constantemente. |
+| **DIP** | *Device Independent Pixels*: píxeles «lógicos». Con el zoom de Windows al 150 %, 100 DIP = 150 píxeles físicos. MIRA convierte entre ambos constantemente. |
 | **Lienzo base** | En el editor, el `canvas` con la imagen de la captura (sin anotaciones). Es **inmutable**. |
 | **Anotación** | Cualquier cosa dibujada encima (flecha, texto, rectángulo…). Es un nodo de Konva dentro del grupo `ann`. |
 | **OCR** | Reconocimiento óptico de caracteres: leer el texto que hay en una imagen. |
-| **ffmpeg** | Programa externo para convertir y recortar vídeo. Mira lo trae empaquetado. |
+| **ffmpeg** | Programa externo para convertir y recortar vídeo. MIRA lo trae empaquetado. |
 | **Temporales** | Archivos en `%TEMP%\capturas`: capturas recién hechas, grabaciones en curso, imágenes para el OCR. Se borran a las 24 h. |
 | **`userData`** | Carpeta de datos de la app (`%APPDATA%\Mira`): ajustes, historial, registro de errores. |
 
@@ -212,7 +221,7 @@ sequenceDiagram
 
 Puntos a destacar de `src/main/index.ts`:
 
-- **Instancia única.** Si ya hay una Mira abierta, la segunda solo le avisa (evento `second-instance` → abre la
+- **Instancia única.** Si ya hay una MIRA abierta, la segunda solo le avisa (evento `second-instance` → abre la
   captura) y termina. En desarrollo, si la abierta es la *instalada*, se le pide que se cierre (`instance.ts`).
 - **Tres atajos globales** (`HOTKEYS` en `src/shared/hotkeys.ts`): capturar, repetir última región y copiar texto.
   El atajo principal es contextual: si se está grabando, **detiene** la grabación; si hay una captura con
@@ -266,7 +275,7 @@ Cada ventana es un par `src/renderer/<página>.html` + `src/renderer/<página>/m
 | --- | --- | --- |
 | `overlay` | Superposición de captura: selección, lupa de píxeles, barra Foto/Vídeo/Texto | media |
 | `preview` | Tarjeta flotante tras capturar | pequeña |
-| `editor` | Editor de anotaciones (Konva) | **grande** (núcleo de ~2000 líneas + 12 módulos) |
+| `editor` | Editor de anotaciones (Konva) | **grande** (núcleo de ~2000 líneas + 11 módulos) |
 | `recorder` | Barra de grabación: compone el vídeo y lo envía en trozos | media |
 | `webcam` | Burbuja con la cámara | pequeña |
 | `border` | Marco alrededor de la región (solo CSS) | mínima |
@@ -315,7 +324,7 @@ APP MIRA/
 
 ## 7. El contrato entre procesos: IPC tipado
 
-Esta es la pieza de diseño más importante para entender Mira. Todo mensaje entre una ventana y el proceso principal
+Esta es la pieza de diseño más importante para entender MIRA. Todo mensaje entre una ventana y el proceso principal
 está declarado **una sola vez** en `src/shared/ipc.ts`.
 
 ### 7.1 Los tres tipos de mensaje
@@ -350,7 +359,7 @@ export interface EventChannels {
 ```mermaid
 flowchart LR
   V["Ventana<br/>api.invoke('editor:save', png)"] -->|1. TypeScript comprueba<br/>nombre y argumentos| P
-  P["Preload<br/>check(channel)"] -->|2. Regex: prefijo permitido<br/>app|overlay|editor|…| M
+  P["Preload<br/>check(channel)"] -->|2. Regex: prefijo permitido<br/>app, overlay, editor…| M
   M["Proceso principal<br/>handle('editor:save', (e, png: unknown) => …)"] -->|3. Validación en ejecución<br/>imageFromBytes(png)| OK[Acción]
 ```
 
@@ -414,6 +423,17 @@ su valor por defecto **sin perder los demás**.
 Cada bloque sigue el mismo formato. Los **criterios de aceptación** son frases comprobables: así se escribiría la spec
 antes de programar, y así se verifica después.
 
+Cada criterio tiene un **identificador** (prefijo de la funcionalidad + número) y su forma de **verificación**:
+
+| Verificación | Significado |
+| --- | --- |
+| **Test** `archivo` | Automático: lo comprueba `npm test` |
+| **Humo** | Se comprueba con una prueba de humo dentro de la app ([sección 12.2](#122-pruebas-de-humo-dentro-de-la-app)), simulando los mensajes IPC. No hay script guardado en el repositorio |
+| **Manual** | Hay que probarlo a mano con la app (depende del teclado, de la pantalla o del hardware) |
+
+Un criterio marcado como «Humo» o «Manual» **no está protegido contra regresiones**: si alguien lo rompe, ningún
+`npm test` lo avisará.
+
 ### 9.1 Captura de imagen (región, ventana, pantalla)
 
 **Objetivo.** Capturar una parte de la pantalla tal y como estaba en el momento de pulsar el atajo.
@@ -455,10 +475,14 @@ sequenceDiagram
 
 **Criterios de aceptación.**
 
-- [ ] Pulsar el atajo dos veces seguidas no abre dos capturas (`session`/`starting`).
-- [ ] Si una superposición no llega a mostrarse en 10 s, la sesión se cierra y el atajo vuelve a funcionar.
-- [ ] Si una superposición se cierra con Alt+F4 o se bloquea, se cierran todas.
-- [ ] Con zoom de Windows al 150 %, una región de 100 × 100 DIP produce una imagen de 150 × 150 px.
+| ID | Criterio | Verificación |
+| --- | --- | --- |
+| CAP-01 | Pulsar el atajo dos veces seguidas no abre dos capturas (`session`/`starting`) | Humo |
+| CAP-02 | Si una superposición no llega a mostrarse en 10 s, la sesión se cierra y el atajo vuelve a funcionar | Humo |
+| CAP-03 | Si una superposición se cierra con Alt+F4 o se bloquea, se cierran todas | Humo |
+| CAP-04 | Con zoom de Windows al 150 %, una región de 100 × 100 DIP produce una imagen de 150 × 150 px | Manual |
+| CAP-05 | Una selección de menos de 2 × 2 px no produce ninguna captura | Humo |
+| CAP-06 | Dos capturas guardadas en el mismo segundo no se sobrescriben («Nombre (2)») | Test `tests/main.test.ts` (`writeNewFile`) |
 
 **Código.** `src/main/capture.ts`, `src/main/output.ts`, `src/renderer/overlay/main.ts`, `src/main/winapi.ts`.
 
@@ -469,6 +493,14 @@ sequenceDiagram
 **Reglas.** Se guarda `lastRegion = {displayId, rect}` en cada captura que no sea de pantalla completa. Si la pantalla
 ya no existe o la región no cabe (cambió la resolución), se abre la captura normal. Mantener pulsado el atajo no lanza
 varias capturas (`repeating`).
+
+**Criterios de aceptación.**
+
+| ID | Criterio | Verificación |
+| --- | --- | --- |
+| REP-01 | Con una región guardada, el atajo captura la misma zona sin mostrar la superposición | Humo |
+| REP-02 | Si la región ya no cabe en la pantalla (cambió la resolución), se abre la captura normal | Manual |
+| REP-03 | Mantener pulsado el atajo produce una sola captura | Manual |
 
 **Código.** `repeatLastRegion()` en `src/main/capture.ts`.
 
@@ -483,6 +515,15 @@ varias capturas (`repeating`).
 - `setContentProtection(true)`: la tarjeta **no sale** en las capturas siguientes.
 - Se recuerda la última cerrada para poder recuperarla (bandeja o `Ctrl+Z`).
 - Acciones: editar, copiar, guardar, anclar, reproducir, arrastrar a otra aplicación (`startDrag`), abrir carpeta.
+
+**Criterios de aceptación.**
+
+| ID | Criterio | Verificación |
+| --- | --- | --- |
+| PRE-01 | Con 4 tarjetas abiertas, una captura nueva cierra la más antigua | Humo |
+| PRE-02 | La tarjeta no aparece en la captura siguiente | Manual |
+| PRE-03 | `Ctrl+Z` sobre una tarjeta recupera la última cerrada | Humo |
+| PRE-04 | Las tarjetas de vídeo no se cierran solas aunque haya cierre automático | Humo |
 
 **Código.** `src/main/preview.ts`, `src/renderer/preview/main.ts`.
 
@@ -540,11 +581,13 @@ sequenceDiagram
 
 **Criterios de aceptación.**
 
-- [ ] Pulsar el atajo principal durante la grabación la detiene.
-- [ ] Si la barra se cierra o se bloquea, se avisa y se guarda lo grabado hasta ese momento.
-- [ ] Cancelar durante la preparación (antes de que aparezca la barra) no deja archivos ni ventanas.
-- [ ] Sin cámara disponible, se graba igual y se avisa con una notificación.
-- [ ] Una grabación de 30 minutos no aumenta la memoria de la app de forma proporcional.
+| ID | Criterio | Verificación |
+| --- | --- | --- |
+| REC-01 | Pulsar el atajo principal durante la grabación la detiene | Manual |
+| REC-02 | Si la barra se cierra o se bloquea, se avisa y se guarda lo grabado hasta ese momento | Humo |
+| REC-03 | Cancelar durante la preparación (antes de que aparezca la barra) no deja archivos ni ventanas | Humo |
+| REC-04 | Sin cámara disponible, se graba igual y se avisa con una notificación | Manual |
+| REC-05 | Una grabación de 30 minutos no aumenta la memoria de la app de forma proporcional | Manual |
 
 **Código.** `src/main/recorder.ts`, `src/main/inputhook.ts`, `src/main/regionui.ts`, `src/renderer/recorder/main.ts`,
 `src/renderer/webcam/main.ts`.
@@ -576,6 +619,16 @@ sequenceDiagram
 
 **Criterios de fin.** Dos fotogramas iguales seguidos (final de la página) · 3 fallos de alineación seguidos · 20 000 px
 de alto · el usuario pulsa «Terminar», Intro o el atajo.
+
+**Criterios de aceptación.**
+
+| ID | Criterio | Verificación |
+| --- | --- | --- |
+| SCR-01 | Dos fotogramas idénticos se interpretan como «no se ha movido» (final de la página) | Test `tests/stitch.test.ts` |
+| SCR-02 | Una cabecera fija se detecta y no se repite en la imagen unida | Test `tests/stitch.test.ts` |
+| SCR-03 | En una zona lisa sin textura no se inventa un desplazamiento | Test `tests/stitch.test.ts` |
+| SCR-04 | La captura se detiene sola al llegar a 20 000 px de alto | Manual |
+| SCR-05 | Al terminar o cancelar, el cursor vuelve a donde estaba | Manual |
 
 **Código.** `src/main/scroll.ts`, `src/renderer/scroll/main.ts`, `src/renderer/scroll/stitch.ts` (con tests en
 `tests/stitch.test.ts`).
@@ -612,6 +665,15 @@ flowchart LR
   lejanas con un tabulador.
 - Si hay un QR y es un enlace, se ofrece abrirlo.
 
+**Criterios de aceptación.**
+
+| ID | Criterio | Verificación |
+| --- | --- | --- |
+| OCR-01 | Si una petición tarda más de 20 s, devuelve un error y el siguiente OCR funciona | Manual |
+| OCR-02 | Sin ningún idioma con OCR instalado, el mensaje explica dónde añadirlo | Manual |
+| OCR-03 | Texto en columnas separadas sale en el mismo renglón separado por un tabulador | Manual · *candidato a test*: `ocrText` es una función pura |
+| OCR-04 | Un QR con un enlace ofrece abrirlo | Manual |
+
 **Código.** `src/main/ocr.ts`, `resources/ocr.ps1`, `src/main/textcard.ts`, `src/renderer/ocr/main.ts`.
 
 ### 9.7 Editor de vídeo
@@ -631,6 +693,17 @@ flowchart LR
 - **Vigilante**: si ffmpeg pasa 60 s sin escribir nada, se considera colgado y se detiene.
 - Sin ffmpeg solo se ofrece WebM (no necesita conversión).
 
+**Criterios de aceptación.**
+
+| ID | Criterio | Verificación |
+| --- | --- | --- |
+| VID-01 | El protocolo responde bien a peticiones por rangos (206, final recortado, 416 fuera del archivo) | Test `tests/main.test.ts` (`parseRange`) |
+| VID-02 | Un vídeo real se exporta a MP4 y a GIF | Test `tests/main.test.ts` (ffmpeg) |
+| VID-03 | Un ffmpeg que deja de responder se detiene | Test `tests/main.test.ts` (ffmpeg) |
+| VID-04 | Si ffmpeg falla, el error llega con su mensaje | Test `tests/main.test.ts` (ffmpeg) |
+| VID-05 | Un vídeo cuya duración no se puede leer no se convierte (se pide guardarlo como WebM) | Test `tests/main.test.ts` (ffmpeg) |
+| VID-06 | El recorte dura exactamente lo elegido aunque la grabación tenga huecos de tiempo | Manual |
+
 **Código.** `src/main/player.ts`, `src/main/ffmpeg.ts`, `src/main/protocol.ts`, `src/renderer/player/main.ts`.
 
 ### 9.8 Historial
@@ -648,6 +721,16 @@ flowchart LR
   con la generación anterior se descarta.
 - La poda de lo que tiene más de 30 días se hace al arrancar y cada 6 horas.
 
+**Criterios de aceptación.**
+
+| ID | Criterio | Verificación |
+| --- | --- | --- |
+| HIS-01 | Un borrado durante dos altas no pierde ninguna y no resucita lo borrado | Test `tests/history.test.ts` |
+| HIS-02 | Lo que se estaba añadiendo mientras se vaciaba no entra ni deja archivos | Test `tests/history.test.ts` |
+| HIS-03 | Elementos no válidos o con rutas fuera de `items/` y `thumbs/` en `index.json` se ignoran | Manual · *candidato a test* |
+| HIS-04 | Los temporales de más de 24 h se borran, salvo los que tiene abiertos alguna ventana | Test `tests/main.test.ts` (`cleanTempDir`) |
+| HIS-05 | Lo que tiene más de 30 días desaparece del historial y del disco | Manual |
+
 **Código.** `src/main/history.ts` (datos), `src/main/historywin.ts` (ventana), `src/renderer/history/main.ts`.
 
 ### 9.9 Capturas ancladas
@@ -656,6 +739,13 @@ flowchart LR
 
 **Reglas.** Se abre en la misma posición donde estaba en la pantalla (`origin`). Rueda = tamaño · `Ctrl` + rueda =
 opacidad · doble clic = editar. Se pueden cerrar todas desde la bandeja.
+
+**Criterios de aceptación.**
+
+| ID | Criterio | Verificación |
+| --- | --- | --- |
+| PIN-01 | La captura anclada aparece en la misma posición que tenía en la pantalla | Manual |
+| PIN-02 | La rueda cambia el tamaño y `Ctrl` + rueda, la opacidad | Manual |
 
 **Código.** `src/main/pin.ts`, `src/renderer/pin/main.ts`.
 
@@ -668,6 +758,15 @@ opacidad · doble clic = editar. Se pueden cerrar todas desde la bandeja.
 - Si un atajo nuevo no se puede registrar (otra app lo usa), se vuelve al anterior y se avisa.
 - Si al arrancar el atajo principal está ocupado, se muestra un error; los secundarios ocupados se desactivan sin
   molestar.
+
+**Criterios de aceptación.**
+
+| ID | Criterio | Verificación |
+| --- | --- | --- |
+| AJU-01 | Los ajustes desconocidos o con un tipo incorrecto se ignoran sin perder los demás | Test `tests/main.test.ts` (`pickSettings`) |
+| AJU-02 | Cada campo no válido del estado de captura toma el valor anterior | Test `tests/main.test.ts` (`pickState`) |
+| AJU-03 | Un atajo ocupado por otra app no se guarda: se mantiene el anterior y se avisa | Manual |
+| AJU-04 | Cerrar Ajustes mientras se graba un atajo vuelve a activar todos los atajos | Manual |
 
 **Código.** `registerSettingsIpc()` en `src/main/index.ts`, `src/main/settings.ts`, `src/renderer/settings/main.ts`.
 
@@ -742,6 +841,18 @@ lo que ves sea lo que se exporta). El resultado se convierte a bytes con `canvas
 - **Desenfoque seguro**: antes de desenfocar se pixela la zona (se reduce mucho su resolución), así el detalle se
   pierde de verdad y el texto no se puede recuperar de la imagen exportada.
 - Pixelado y desenfoque son objetos movibles (`effect`) que se **regeneran** a partir del lienzo base al moverlos.
+
+### 10.6 Criterios de aceptación del editor
+
+| ID | Criterio | Verificación |
+| --- | --- | --- |
+| EDI-01 | La censura automática detecta tarjetas válidas (Luhn) y descarta las que no lo son | Test `tests/sensitive.test.ts` |
+| EDI-02 | Detecta IBAN, DNI/NIE, correos, teléfonos e IP, y corrige O→0 y l→1 en palabras numéricas | Test `tests/sensitive.test.ts` |
+| EDI-03 | Girar a la izquierda y a la derecha (o voltear dos veces) deja la imagen igual | Test `tests/geometry.test.ts` (`mapPoint`) |
+| EDI-04 | El fondo decorativo tiene la misma geometría en la vista y en la exportación | Test `tests/geometry.test.ts` (`bgLayout`) |
+| EDI-05 | Mayús hace cuadrados y ángulos de 45°; el lápiz se suaviza sin perder las esquinas | Test `tests/editor-modules.test.ts` |
+| EDI-06 | Deshacer después de recortar recupera la imagen completa y sus anotaciones | Humo |
+| EDI-07 | Cerrar con cambios sin guardar pregunta «Guardar / No guardar / Cancelar» | Humo |
 
 ---
 
@@ -825,6 +936,33 @@ NODE_OPTIONS="--require <script.cjs>" node_modules/electron/dist/electron.exe . 
 El script espera a `app.whenReady()`, simula mensajes (`ipcMain.emit('overlay:done', …)`), dibuja en el editor a través
 de `window.Konva.stages[0]` y hace capturas de las ventanas con `capturePage()`. Detalles en [CLAUDE.md](../CLAUDE.md).
 
+### 12.3 Trazabilidad: criterios → pruebas
+
+Resumen de los criterios de aceptación de las secciones 9 y 10 y de cuántos tienen un test automático:
+
+| Funcionalidad | Prefijo | Criterios | Con test | Sin test (humo o manual) |
+| --- | --- | ---: | ---: | ---: |
+| Captura de imagen | CAP | 6 | 1 | 5 |
+| Repetir región | REP | 3 | 0 | 3 |
+| Vista previa | PRE | 4 | 0 | 4 |
+| Grabación | REC | 5 | 0 | 5 |
+| Captura con desplazamiento | SCR | 5 | 3 | 2 |
+| OCR y QR | OCR | 4 | 0 | 4 |
+| Editor de vídeo | VID | 6 | 5 | 1 |
+| Historial | HIS | 5 | 3 | 2 |
+| Ancladas | PIN | 2 | 0 | 2 |
+| Ajustes y atajos | AJU | 4 | 2 | 2 |
+| Editor de imágenes | EDI | 7 | 5 | 2 |
+| **Total** | | **51** | **19** | **32** |
+
+**Cómo leerlo.** La lógica pura (unión de fotogramas, ffmpeg, historial, validación, censura, geometría) está bien
+cubierta. Los huecos están en lo que depende de ventanas y de Windows: captura, vista previa, grabación y OCR.
+Los primeros candidatos para nuevos tests son los que ya son funciones puras: **OCR-03** (`ocrText`) y **HIS-03**
+(validación de `index.json`).
+
+> **Regla para mantener esta tabla.** Al añadir un criterio, asígnale el siguiente número de su prefijo y su
+> verificación; al añadir un test que lo cubra, cambia «Humo» o «Manual» por «Test `archivo`» y actualiza el recuento.
+
 ---
 
 ## 13. Compilar, ejecutar y distribuir
@@ -853,7 +991,13 @@ Ejemplo: «botón en la vista previa para copiar la ruta del archivo».
 
 1. **Escribe la spec** (en el formato de la sección 9): objetivo, entradas, salidas, reglas, criterios de aceptación.
    Ej.: *«Al pulsar el botón, la ruta del archivo se copia al portapapeles. Solo para imágenes. Debe funcionar aunque
-   la tarjeta esté a punto de cerrarse sola.»*
+   la tarjeta esté a punto de cerrarse sola.»* Da a cada criterio su identificador y decide **antes de programar**
+   cómo se verificará:
+
+   | ID | Criterio | Verificación |
+   | --- | --- | --- |
+   | PRE-05 | El botón copia la ruta de la imagen al portapapeles | Humo |
+   | PRE-06 | En una tarjeta de vídeo el botón no aparece | Humo |
 2. **Declara el contrato** en `src/shared/ipc.ts`:
    ```ts
    'preview:copy-path': Call<[], boolean>   // en InvokeChannels
@@ -872,7 +1016,10 @@ Ejemplo: «botón en la vista previa para copiar la ruta del archivo».
    `boolean`.
 5. **Si hay lógica pura**, sácala a una función y escribe su test en `tests/`.
 6. **Comprueba**: `npm run typecheck`, `npm test` y una prueba de humo si toca la interfaz.
-7. **Revisa los criterios de aceptación** uno a uno.
+7. **Revisa los criterios de aceptación** uno a uno y actualiza la tabla de la
+   [sección 12.3](#123-trazabilidad-criterios--pruebas).
+8. **Escribe un mensaje de commit que describa el cambio**, no el proceso: «Añade botón para copiar la ruta en la vista
+   previa», no «He hecho…».
 
 **Si creas una página nueva:** añade `<página>.html` + `<página>/main.ts`, añádela a `pages` en
 `electron.vite.config.ts`, su prefijo al preload, y créala con `createWindow('<página>', …)`.
@@ -888,14 +1035,14 @@ Ejemplo: «botón en la vista previa para copiar la ruta del archivo».
 | Recortar vídeo con `-ss`/`-t` sale mal | Huecos de tiempo con la pantalla quieta | Filtros `fps + tpad + trim` (ver `exportVideo`) |
 | Al arrancar la webcam, salta la grabación | La cámara bloquea un momento la captura | Abrirla y esperar `webcam:ready` antes de grabar |
 | El vídeo no deja saltar | El `<video>` necesita rangos HTTP | Protocolo `capturas://` con respuesta 206 y CORS |
-| `npm run dev` cierra la Mira instalada | Comparten carpeta de datos y bloqueo | Es intencionado; en pruebas usa `--user-data-dir` |
+| `npm run dev` cierra la MIRA instalada | Comparten carpeta de datos y bloqueo | Es intencionado; en pruebas usa `--user-data-dir` |
 | npm 11 no ejecuta scripts de instalación | Seguridad de npm | Lista `allowScripts` en `package.json` |
 | El OCR se salta líneas muy repetitivas | Limitación de Windows OCR | En palabras numéricas se normaliza O→0 y l/I→1 |
 | Se pierden barras invertidas en regex generados con `node -e` | Escapado de cadenas | Revisar los regex o usar el editor |
 
 ---
 
-## 16. Chuleta para explicar Mira en 2 minutos
+## 16. Chuleta para explicar MIRA en 2 minutos
 
 > **Qué es.** Una app de bandeja para Windows que captura imagen, vídeo y texto de la pantalla, con editor de
 > anotaciones y editor de vídeo. Todo en local.
