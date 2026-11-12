@@ -54,6 +54,7 @@
       line-height: 1;
       letter-spacing: -0.03em;
       text-transform: uppercase;
+      text-align: center;
     }
     #vid-line {
       position: absolute;
@@ -66,6 +67,7 @@
       line-height: 1;
       letter-spacing: -0.02em;
       text-transform: uppercase;
+      text-align: center;
       color: #ff5d6c;
     }
     #vid-chips {
@@ -74,6 +76,7 @@
       top: 850px;
       width: 972px;
       display: flex;
+      justify-content: center;
       gap: 24px;
     }
     .vid-chip {
@@ -91,6 +94,7 @@
       width: 972px;
       font-size: 48px;
       font-weight: 700;
+      text-align: center;
       color: #c9c9d6;
     }
     /* Parte B: OCR */
@@ -162,7 +166,7 @@
       <div id="vid-chips">
         <div id="vid-c1" class="vid-chip">MP4</div>
         <div id="vid-c2" class="vid-chip">GIF</div>
-        <div id="vid-c3" class="vid-chip">WebM</div>
+        <div id="vid-c3" class="vid-chip">WebCAM</div>
       </div>
       <p id="vid-extra">Clics, teclas y webcam.</p>
     </div>
@@ -185,7 +189,7 @@
       gsap.set("#vid-b", { opacity: 0 });
 
       // Parte A — «GRABA» golpea al entrar
-      tl.fromTo("#vid-big", { scale: 1.6, opacity: 0, filter: "blur(12px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "expo.out", transformOrigin: "0% 50%" }, 0);
+      tl.fromTo("#vid-big", { scale: 1.6, opacity: 0, filter: "blur(12px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "expo.out", transformOrigin: "50% 50%" }, 0);
       tl.fromTo("#vid-rec", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 0.1);
       tl.fromTo("#vid-line", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power2.out" }, 0.3);
       tl.fromTo(["#vid-c1", "#vid-c2", "#vid-c3"], { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.8)", stagger: 0.09 }, 0.6);

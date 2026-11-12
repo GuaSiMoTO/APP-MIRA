@@ -1,0 +1,76 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #07070d;
+      font-family: "Inter", sans-serif;
+      color: #fff;
+    }
+    #more-flood {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg, #06c2ff 0%, #1d4bff 45%, #8a2bff 100%);
+    }
+    #more-text {
+      position: absolute;
+      left: 54px;
+      top: 520px;
+      width: 972px;
+      text-align: center;
+      font-family: "Archivo Black", sans-serif;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      text-shadow: 0 18px 0 rgba(7, 7, 13, 0.28);
+    }
+    #more-text span {
+      display: inline-block;
+    }
+    #more-l1 {
+      font-size: 150px;
+    }
+    #more-l2 {
+      margin-top: 10px;
+      font-size: 260px;
+    }
+  </style>
+
+  <div id="root" data-composition-id="more" data-width="1080" data-height="1920">
+    <div id="more-flood"></div>
+    <h1 id="more-text" data-layout-allow-overlap>
+      <div id="more-l1"><span id="more-w1">¡Y</span> <span id="more-w2">mucho</span></div>
+      <div id="more-l2"><span id="more-w3">más!</span></div>
+    </h1>
+  </div>
+
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const HIT = 0.52; // «MÁS!» golpea aquí (17,12 s del vídeo)
+
+      gsap.set("#more-flood", { clipPath: "circle(0% at 50% 36%)" });
+      gsap.set(["#more-w1", "#more-w2", "#more-w3"], { opacity: 0 });
+
+      // El color de la app inunda la pantalla desde el centro
+      tl.to("#more-flood", { clipPath: "circle(150% at 50% 36%)", duration: 0.42, ease: "power2.inOut" }, 0);
+
+      // Las palabras entran una a una; «MÁS!» golpea más fuerte
+      tl.fromTo(["#more-w1", "#more-w2"], { opacity: 0, scale: 1.8, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.24, ease: "expo.out", stagger: 0.12 }, 0.2);
+      tl.fromTo("#more-w3", { opacity: 0, scale: 3, filter: "blur(16px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.32, ease: "expo.out" }, HIT);
+      // Sacudida del golpe
+      tl.fromTo("#more-text", { x: 0, y: 0 }, { x: -12, y: 8, duration: 0.04, ease: "none" }, HIT + 0.04);
+      tl.to("#more-text", { x: 9, y: -6, duration: 0.05, ease: "none" }, HIT + 0.08);
+      tl.to("#more-text", { x: 0, y: 0, duration: 0.08, ease: "power2.out" }, HIT + 0.13);
+
+      // Salida: el texto se atraviesa y el color se recoge para dejar paso a la pregunta
+      tl.to("#more-text", { scale: 1.6, opacity: 0, filter: "blur(14px)", duration: 0.22, ease: "power3.in", transformOrigin: "540px 230px" }, 1.3);
+      tl.to("#more-flood", { clipPath: "circle(0% at 50% 36%)", duration: 0.28, ease: "power2.in" }, 1.3);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["more"] = tl;
+    })();
+  </script>
+</template>

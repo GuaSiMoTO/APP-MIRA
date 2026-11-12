@@ -30,7 +30,7 @@
   </head>
   <body>
     <!--
-      Tráiler de MIRA para Instagram Reels: 1080×1920, 30 fps, 25,8 s.
+      Tráiler de MIRA para Instagram Reels: 1080×1920, 30 fps, 27,8 s.
       Cada escena vive en compositions/<id>.html; aquí solo están las escenas y el sonido.
       Zona segura de Reels: todo el texto entre y=168 e y=1330.
     -->
@@ -38,7 +38,7 @@
       id="root"
       data-composition-id="main"
       data-start="0"
-      data-duration="25.8"
+      data-duration="27.8"
       data-fps="30"
       data-width="1080"
       data-height="1920"
@@ -56,11 +56,14 @@
       <div id="video" data-composition-id="video" data-composition-src="compositions/video.html"
         data-start="11.8" data-duration="4.8" data-track-index="1" data-track-kind="graphics"
         data-width="1080" data-height="1920"></div>
+      <div id="more" data-composition-id="more" data-composition-src="compositions/more.html"
+        data-start="16.6" data-duration="1.6" data-track-index="1" data-track-kind="graphics"
+        data-width="1080" data-height="1920"></div>
       <div id="free" data-composition-id="free" data-composition-src="compositions/free.html"
-        data-start="16.6" data-duration="4.6" data-track-index="1" data-track-kind="graphics"
+        data-start="18.2" data-duration="4.6" data-track-index="1" data-track-kind="graphics"
         data-width="1080" data-height="1920"></div>
       <div id="end" data-composition-id="end" data-composition-src="compositions/end.html"
-        data-start="21.2" data-duration="4.6" data-track-index="1" data-track-kind="graphics"
+        data-start="22.8" data-duration="5.0" data-track-index="1" data-track-kind="graphics"
         data-width="1080" data-height="1920"></div>
 
       <!--
@@ -72,13 +75,13 @@
       <audio id="sfx-hook-click" class="clip" src="assets/sfx/click.mp3" data-start="0.86" data-duration="0.36" data-track-index="2" data-volume="1"></audio>
       <!-- Corte gancho → captura (2,80 s) -->
       <audio id="sfx-cut-1" class="clip" src="assets/sfx/whoosh.mp3" data-start="2.67" data-duration="0.57" data-track-index="3" data-volume="0.7"></audio>
-      <!-- El cursor pulsa (3,30 s) y suelta (4,25 s) -->
-      <audio id="sfx-press" class="clip" src="assets/sfx/click.mp3" data-start="3.26" data-duration="0.36" data-track-index="2" data-volume="1"></audio>
-      <audio id="sfx-release" class="clip" src="assets/sfx/click.mp3" data-start="4.21" data-duration="0.36" data-track-index="2" data-volume="1"></audio>
-      <!-- Teclas del atajo (4,70 · 4,85 · 5,00 s) -->
-      <audio id="sfx-key-1" class="clip" src="assets/sfx/pop.mp3" data-start="4.613" data-duration="0.7" data-track-index="4" data-volume="0.9"></audio>
-      <audio id="sfx-key-2" class="clip" src="assets/sfx/pop.mp3" data-start="4.763" data-duration="0.7" data-track-index="5" data-volume="0.8"></audio>
-      <audio id="sfx-key-3" class="clip" src="assets/sfx/pop.mp3" data-start="4.913" data-duration="0.7" data-track-index="6" data-volume="1"></audio>
+      <!-- Teclas del atajo (3,15 · 3,30 · 3,45 s) -->
+      <audio id="sfx-key-1" class="clip" src="assets/sfx/pop.mp3" data-start="3.063" data-duration="0.7" data-track-index="4" data-volume="0.9"></audio>
+      <audio id="sfx-key-2" class="clip" src="assets/sfx/pop.mp3" data-start="3.213" data-duration="0.7" data-track-index="5" data-volume="0.8"></audio>
+      <audio id="sfx-key-3" class="clip" src="assets/sfx/pop.mp3" data-start="3.363" data-duration="0.7" data-track-index="6" data-volume="1"></audio>
+      <!-- El cursor pulsa (4,05 s) y suelta (4,80 s) -->
+      <audio id="sfx-press" class="clip" src="assets/sfx/click.mp3" data-start="4.01" data-duration="0.36" data-track-index="2" data-volume="1"></audio>
+      <audio id="sfx-release" class="clip" src="assets/sfx/click.mp3" data-start="4.76" data-duration="0.36" data-track-index="2" data-volume="1"></audio>
       <!-- Corte captura → editor (6,00 s) -->
       <audio id="sfx-cut-2" class="clip" src="assets/sfx/whoosh.mp3" data-start="5.87" data-duration="0.57" data-track-index="3" data-volume="0.7"></audio>
       <!-- Etiquetas del editor (7,35 · 8,75 · 10,25 s) -->
@@ -89,17 +92,21 @@
       <audio id="sfx-cut-3" class="clip" src="assets/sfx/whoosh.mp3" data-start="11.67" data-duration="0.57" data-track-index="3" data-volume="0.75"></audio>
       <!-- El OCR lee el texto (14,45 s) -->
       <audio id="sfx-typing" class="clip" src="assets/sfx/typing.mp3" data-start="14" data-duration="1.5" data-track-index="2" data-volume="0.55"></audio>
-      <!-- Subida hacia «GRATIS» (cresta en 17,90 s) e impacto -->
-      <audio id="sfx-riser" class="clip" src="assets/sfx/riser.mp3" data-start="14.461" data-duration="4.3" data-track-index="7" data-volume="0.6"></audio>
-      <audio id="sfx-impact" class="clip" src="assets/sfx/impact-bass-1.mp3" data-start="17.86" data-duration="2.1" data-track-index="8" data-volume="0.6"></audio>
-      <!-- Ventajas (18,70 · 18,90 · 19,10 s) -->
-      <audio id="sfx-chip-1" class="clip" src="assets/sfx/pop.mp3" data-start="18.613" data-duration="0.7" data-track-index="4" data-volume="0.9"></audio>
-      <audio id="sfx-chip-2" class="clip" src="assets/sfx/pop.mp3" data-start="18.813" data-duration="0.7" data-track-index="5" data-volume="0.9"></audio>
-      <audio id="sfx-chip-3" class="clip" src="assets/sfx/pop.mp3" data-start="19.013" data-duration="0.7" data-track-index="6" data-volume="0.9"></audio>
-      <!-- El logo aterriza (21,75 s) -->
-      <audio id="sfx-logo" class="clip" src="assets/sfx/impact-bass-1.mp3" data-start="21.71" data-duration="2.1" data-track-index="9" data-volume="0.5"></audio>
-      <!-- Botón final (23,10 s) -->
-      <audio id="sfx-cta" class="clip" src="assets/sfx/pop.mp3" data-start="23.013" data-duration="0.7" data-track-index="4" data-volume="1"></audio>
+      <!-- «¡Y MUCHO MÁS!»: entra el color (16,60 s), golpea «MÁS!» (17,12 s) y el color se recoge (17,90 s) -->
+      <audio id="sfx-more-in" class="clip" src="assets/sfx/whoosh.mp3" data-start="16.471" data-duration="0.57" data-track-index="3" data-volume="0.7"></audio>
+      <audio id="sfx-more-hit" class="clip" src="assets/sfx/pop.mp3" data-start="17.033" data-duration="0.7" data-track-index="4" data-volume="1"></audio>
+      <audio id="sfx-more-out" class="clip" src="assets/sfx/whoosh.mp3" data-start="17.771" data-duration="0.57" data-track-index="3" data-volume="0.5"></audio>
+      <!-- Subida hacia «GRATIS» (cresta en 19,50 s) e impacto -->
+      <audio id="sfx-riser" class="clip" src="assets/sfx/riser.mp3" data-start="16.061" data-duration="4.3" data-track-index="7" data-volume="0.6"></audio>
+      <audio id="sfx-impact" class="clip" src="assets/sfx/impact-bass-1.mp3" data-start="19.46" data-duration="2.1" data-track-index="8" data-volume="0.6"></audio>
+      <!-- Ventajas (20,30 · 20,50 · 20,70 s) -->
+      <audio id="sfx-chip-1" class="clip" src="assets/sfx/pop.mp3" data-start="20.213" data-duration="0.7" data-track-index="4" data-volume="0.9"></audio>
+      <audio id="sfx-chip-2" class="clip" src="assets/sfx/pop.mp3" data-start="20.413" data-duration="0.7" data-track-index="5" data-volume="0.9"></audio>
+      <audio id="sfx-chip-3" class="clip" src="assets/sfx/pop.mp3" data-start="20.613" data-duration="0.7" data-track-index="6" data-volume="0.9"></audio>
+      <!-- El logo aterriza (23,35 s) -->
+      <audio id="sfx-logo" class="clip" src="assets/sfx/impact-bass-1.mp3" data-start="23.31" data-duration="2.1" data-track-index="9" data-volume="0.5"></audio>
+      <!-- Botón final (25,10 s) -->
+      <audio id="sfx-cta" class="clip" src="assets/sfx/pop.mp3" data-start="25.013" data-duration="0.7" data-track-index="4" data-volume="1"></audio>
     </div>
     <script>
       window.__timelines = window.__timelines || {};

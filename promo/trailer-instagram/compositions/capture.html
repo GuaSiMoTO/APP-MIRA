@@ -205,24 +205,24 @@
       gsap.set(["#cap-k1", "#cap-k2", "#cap-k3"], { opacity: 0, scale: 0.5 });
       gsap.set(".cap-plus", { opacity: 0 });
 
-      // El cursor entra, pulsa en 0,50 s y arrastra hasta 1,40 s
-      tl.fromTo("#cap-cursor", { x: 1010, y: 620 }, { x: 128, y: 232, duration: 0.42, ease: "power3.out" }, 0.06);
-      tl.to("#cap-cursor", { scale: 0.82, duration: 0.06, transformOrigin: "0 0" }, 0.5);
-      tl.to("#cap-cursor", { x: 601, y: 407, duration: 0.9, ease: "power2.inOut" }, 0.5);
-      tl.to("#cap-fill", { scaleX: 1, scaleY: 1, duration: 0.9, ease: "power2.inOut" }, 0.5);
+      // Primero el atajo: una tecla tras otra (0,35 · 0,50 · 0,65 s)
+      tl.to("#cap-k1", { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.8)" }, 0.35);
+      tl.to(".cap-plus", { opacity: 1, duration: 0.15, stagger: 0.15 }, 0.43);
+      tl.to("#cap-k2", { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.8)" }, 0.5);
+      tl.to("#cap-k3", { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.8)" }, 0.65);
 
-      // Suelta en 1,45 s: destello y marco
-      tl.to("#cap-cursor", { scale: 1, duration: 0.08 }, 1.45);
-      tl.fromTo("#cap-flash", { opacity: 0.9 }, { opacity: 0, duration: 0.32, ease: "power2.out", immediateRender: false }, 1.45);
-      tl.to("#cap-border", { opacity: 1, duration: 0.05 }, 1.45);
-      tl.fromTo("#cap-size", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.2, ease: "power3.out" }, 1.5);
-      tl.to("#cap-cursor", { x: 760, y: 640, opacity: 0, duration: 0.4, ease: "power2.in" }, 1.6);
+      // Después el cursor entra, pulsa en 1,25 s y arrastra hasta 2,00 s
+      tl.fromTo("#cap-cursor", { x: 1010, y: 620 }, { x: 128, y: 232, duration: 0.42, ease: "power3.out" }, 0.8);
+      tl.to("#cap-cursor", { scale: 0.82, duration: 0.06, transformOrigin: "0 0" }, 1.25);
+      tl.to("#cap-cursor", { x: 601, y: 407, duration: 0.75, ease: "power2.inOut" }, 1.25);
+      tl.to("#cap-fill", { scaleX: 1, scaleY: 1, duration: 0.75, ease: "power2.inOut" }, 1.25);
 
-      // Atajo: una tecla tras otra
-      tl.to("#cap-k1", { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.8)" }, 1.9);
-      tl.to(".cap-plus", { opacity: 1, duration: 0.15, stagger: 0.15 }, 1.98);
-      tl.to("#cap-k2", { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.8)" }, 2.05);
-      tl.to("#cap-k3", { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.8)" }, 2.2);
+      // Suelta en 2,00 s: destello y marco
+      tl.to("#cap-cursor", { scale: 1, duration: 0.08 }, 2.0);
+      tl.fromTo("#cap-flash", { opacity: 0.9 }, { opacity: 0, duration: 0.32, ease: "power2.out", immediateRender: false }, 2.0);
+      tl.to("#cap-border", { opacity: 1, duration: 0.05 }, 2.0);
+      tl.fromTo("#cap-size", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.2, ease: "power3.out" }, 2.05);
+      tl.to("#cap-cursor", { x: 760, y: 640, opacity: 0, duration: 0.4, ease: "power2.in" }, 2.15);
 
       // Salida: barrido a la izquierda
       tl.to("#cap-wrap", { x: -1250, filter: "blur(16px)", duration: 0.28, ease: "power3.in" }, 2.9);

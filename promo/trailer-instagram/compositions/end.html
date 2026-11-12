@@ -23,7 +23,7 @@
     #end-icon {
       position: absolute;
       left: 340px;
-      top: 400px;
+      top: 340px;
       width: 400px;
       height: 400px;
     }
@@ -33,14 +33,14 @@
       height: 120px;
       border: 18px solid #fff;
     }
-    #end-br1 { left: 300px; top: 360px; border-right: 0; border-bottom: 0; border-radius: 44px 0 0 0; }
-    #end-br2 { left: 660px; top: 360px; border-left: 0; border-bottom: 0; border-radius: 0 44px 0 0; }
-    #end-br3 { left: 300px; top: 720px; border-right: 0; border-top: 0; border-radius: 0 0 0 44px; }
-    #end-br4 { left: 660px; top: 720px; border-left: 0; border-top: 0; border-radius: 0 0 44px 0; }
+    #end-br1 { left: 300px; top: 300px; border-right: 0; border-bottom: 0; border-radius: 44px 0 0 0; }
+    #end-br2 { left: 660px; top: 300px; border-left: 0; border-bottom: 0; border-radius: 0 44px 0 0; }
+    #end-br3 { left: 300px; top: 660px; border-right: 0; border-top: 0; border-radius: 0 0 0 44px; }
+    #end-br4 { left: 660px; top: 660px; border-left: 0; border-top: 0; border-radius: 0 0 44px 0; }
     #end-word {
       position: absolute;
       left: 250px;
-      top: 850px;
+      top: 790px;
       width: 580px;
       height: 144px;
     }
@@ -52,18 +52,32 @@
     #end-tag {
       position: absolute;
       left: 54px;
-      top: 1010px;
+      top: 950px;
       width: 972px;
       text-align: center;
       font-size: 50px;
       font-weight: 400;
       letter-spacing: 0.22em;
+      text-indent: 0.22em;
+      color: #c9c9d6;
+    }
+    #end-tag2 {
+      position: absolute;
+      left: 54px;
+      top: 1022px;
+      width: 972px;
+      text-align: center;
+      font-size: 50px;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-indent: 0.22em; /* compensa el espaciado tras la última letra para centrar de verdad */
+      white-space: nowrap;
       color: #c9c9d6;
     }
     #end-cta {
       position: absolute;
       left: 140px;
-      top: 1130px;
+      top: 1110px;
       width: 800px;
       height: 124px;
       display: flex;
@@ -82,7 +96,7 @@
     #end-feat {
       position: absolute;
       left: 54px;
-      top: 1280px;
+      top: 1262px;
       width: 972px;
       text-align: center;
       font-size: 36px;
@@ -103,6 +117,7 @@
     <img id="end-icon" src="assets/img/mira-icon-1024.png" alt="Icono de MIRA" />
     <div id="end-word"><img src="assets/img/mira-wordmark-white.png" alt="MIRA" /></div>
     <p id="end-tag">capture more</p>
+    <p id="end-tag2">capture better and faster</p>
     <div id="end-cta">Gratis para Windows</div>
     <p id="end-feat">Capturas · Vídeo · OCR</p>
   </div>
@@ -112,7 +127,7 @@
       const tl = gsap.timeline({ paused: true });
       const LAND = 0.55; // el icono aterriza aquí (21,75 s del vídeo)
 
-      gsap.set(["#end-icon", "#end-tag", "#end-feat"], { opacity: 0 });
+      gsap.set(["#end-icon", "#end-tag", "#end-tag2", "#end-feat"], { opacity: 0 });
       gsap.set("#end-cta", { opacity: 0, scale: 0.6 });
       gsap.set("#end-word", { clipPath: "inset(0% 100% 0% 0%)" });
 
@@ -136,10 +151,11 @@
       // La palabra «MIRA» se descubre de izquierda a derecha
       tl.to("#end-word", { clipPath: "inset(0% 0% 0% 0%)", duration: 0.42, ease: "power3.out" }, 0.95);
       tl.fromTo("#end-tag", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power2.out" }, 1.4);
+      tl.fromTo("#end-tag2", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power2.out" }, 1.8);
 
-      // Llamada a la acción (1,90 s)
-      tl.to("#end-cta", { opacity: 1, scale: 1, duration: 0.36, ease: "back.out(1.6)" }, 1.9);
-      tl.fromTo("#end-feat", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power2.out" }, 2.3);
+      // Llamada a la acción (2,30 s)
+      tl.to("#end-cta", { opacity: 1, scale: 1, duration: 0.36, ease: "back.out(1.6)" }, 2.3);
+      tl.fromTo("#end-feat", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power2.out" }, 2.7);
 
       window.__timelines = window.__timelines || {};
       window.__timelines["end"] = tl;
